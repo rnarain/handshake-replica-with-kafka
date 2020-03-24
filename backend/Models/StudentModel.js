@@ -11,7 +11,7 @@ var studentSchema = new Schema({
         skills : String,
         careerObjective : String,
         profilePicURL : String,
-        education : [ 
+        education : 
             {
                 college : String,
                 major : Number,
@@ -19,9 +19,8 @@ var studentSchema = new Schema({
                 yearOfPassing : Date,
                 gpa : String,
                 degreeType : Number
-            }
-        ],
-        experience : [ 
+            },
+        experience : 
             {
                 company : String,
                 location : String,
@@ -30,7 +29,6 @@ var studentSchema = new Schema({
                 title : String,
                 description :String 
             }
-        ]
     }
     ,
 {

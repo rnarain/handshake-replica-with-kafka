@@ -14,7 +14,8 @@ const {
   updateStudentObjective,
   addUpdateStudentEducation,
   addUpdateStudentExperience,
-  updateStudentSkills
+  updateStudentSkills,
+  updateContactInformation
 
 //   login,
 //   getUserByUserId,
@@ -25,17 +26,17 @@ const {
 
 let checkAuth = passport.authenticate('jwt', { session: false });
 // router.get("/", checkToken, getUsers);
- router.post("/createStudent",checkAuth, createStudent);
+ router.post("/createStudent", createStudent);
  router.get("/getStudentDetails/:id",checkAuth, getStudentDetails);
- router.get("/getAllStudents", getAllStudents);
+ router.get("/getAllStudents", checkAuth,getAllStudents);
 
- router.post("/updateStudentName", updateStudentName);
- router.post("/updateStudentSkills", updateStudentSkills);
-//  router.post("/updateContactInformation", updateContactInformation);
- router.post("/updateStudentObjective", updateStudentObjective);
- router.post("/addUpdateStudentEducation", addUpdateStudentEducation);
- router.post("/addUpdateStudentExperience", addUpdateStudentExperience);
- router.post("/updateStudentProfilePic/:id", updateStudentProfilePic);
+ router.post("/updateStudentName", checkAuth, updateStudentName);
+ router.post("/updateStudentSkills", checkAuth, updateStudentSkills);
+  router.post("/updateContactInformation", checkAuth,updateContactInformation);
+ router.post("/updateStudentObjective", checkAuth ,updateStudentObjective);
+ router.post("/addUpdateStudentEducation", checkAuth ,addUpdateStudentEducation);
+ router.post("/addUpdateStudentExperience", checkAuth ,addUpdateStudentExperience);
+ router.post("/updateStudentProfilePic/:id", checkAuth ,updateStudentProfilePic);
  
 
 

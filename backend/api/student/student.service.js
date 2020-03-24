@@ -1,14 +1,7 @@
-const pool = require("../../config/database");
 const Student = require("../../Models/StudentModel");
 
-
-// 0 - student 1- employer
 module.exports = {
-
-  // new
   createStudent: (data, callBack) => {
-
-    console.log(data);
     var newStudent = new Student({
       fname: data.fname,
       lname: data.lname,
@@ -19,23 +12,41 @@ module.exports = {
       skills: null,
       careerObjective: null,
       profilePicURL: null,
-      education: [{
+      education: {
         college: data.college,
         yearOfPassing: data.yearOfPassing,
         major: data.major,
         yearOfStarting: null,
         gpa: 0,
         degreeType: null
-      }]
-
+      },
+      experience: 
+        {
+          company: null,
+          location: null,
+          startDate: null,
+          endDate: null,
+          title: null,
+          description: null
+        }
     });
 
-    newStudent.save((error, data) => {
+    Student.findOne({ email: data.email }, (error, user) => {
       if (error) {
         callBack(error);
       }
-      console.log(data);
-      return callBack(null, data);
+      if (user) {
+        return callBack("User already exists");
+      }
+      else {
+        newStudent.save((error, data) => {
+          if (error) {
+            callBack(error);
+          }
+          console.log(data);
+          return callBack(null, data);
+        })
+      }
     })
   },
 
@@ -53,7 +64,7 @@ module.exports = {
   },
 
   getStudentProfileDetails: (id, callBack) => {
-    Student.find({ studentID: id }, (error, result) => {
+    Student.find({ _id: id }, (error, result) => {
       if (error) {
         callBack(error);
       }
@@ -63,247 +74,107 @@ module.exports = {
   },
 
   updateStudentName: (data, callBack) => {
-    console.log(data);
-    pool.query(
-      `UPDATE studentprofile SET fname=? ,lname=? where studentID = ?`,
-      [
-        data.fname,
-        data.lname,
-        data.id
-      ],
-      (error, results) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+    var newData = {
+      fname: data.fname,
+      lname: data.lname
+    }
+    Student.update({ _id: data.id }, newData, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
       }
+      return callBack(null, results);
+    }
     );
   },
 
   updateStudentSkills: (data, callBack) => {
-    console.log(data);
-    pool.query(
-      `UPDATE studentprofile SET skills=? where studentID = ?`,
-      [
-        data.skills,
-        data.id
-      ],
-      (error, results) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+    Student.update({ _id: data.id }, { skills: data.skills }, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
       }
+      return callBack(null, results);
+    }
     );
   },
 
-
-
   updateStudentObjective: (data, callBack) => {
-    console.log(data);
-    pool.query(
-      `UPDATE studentprofile SET careerObjective=? where studentID = ?`,
-      [
-        data.careerObjective,
-        data.id
-      ],
-      (error, results) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+    Student.update({ _id: data.id }, { careerObjective: data.careerObjective, }, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
       }
+      return callBack(null, results);
+    }
     );
   },
 
   addUpdateStudentEducation: (data, callBack) => {
-    if (data.educationID == "" || data.educationID == null) {
-      console.log("update");
-      pool.query(
-        `insert into education(studentID,college,major,yearOfStarting,yearOfPassing,gpa,degreeType ) values(?,?,?,?,?,?,?)`,
-        [
-          data.id,
-          data.college,
-          data.major,
-          data.yearOfStarting,
-          data.yearOfPassing,
-          data.gpa,
-          data.degreeType,
-        ],
-        (error, results) => {
-          if (error) {
-            callBack(error);
-          }
-          return callBack(null, results);
-        }
-      );
+    let newData = {
+      college: data.college,
+      major: data.major,
+      yearOfStarting: data.yearOfStarting,
+      yearOfPassing: data.yearOfPassing,
+      gpa: data.gpa,
+      degreeType: data.degreeType,
     }
-
-    else {
-      pool.query(
-        `Update education SET studentID=?,college=?,major=?,yearOfStarting=?,yearOfPassing=?,gpa=?,degreeType=?  where educationID = ?`,
-        [
-          data.id,
-          data.college,
-          data.major,
-          data.yearOfStarting,
-          data.yearOfPassing,
-          data.gpa,
-          data.degreeType,
-          data.educationID,
-        ],
-        (error, results) => {
-          if (error) {
-            callBack(error);
-          }
-          return callBack(null, results);
-        }
-      );
+    Student.update({ _id: data.id }, { education: newData }, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
+      }
+      return callBack(null, results);
     }
+    );
   },
 
   addUpdateStudentExperience: (data, callBack) => {
-    if (data.experienceID == "" || data.experienceID == null) {
-      pool.query(
-        `insert into experience(studentID,company,location,startDate,endDate,title,description ) values(?,?,?,?,?,?,?)`,
-        [
-          data.id,
-          data.company,
-          data.location,
-          data.startDate,
-          data.endDate,
-          data.title,
-          data.description,
-        ],
-        (error, results) => {
-          if (error) {
-            callBack(error);
-          }
-          return callBack(null, results);
-        }
-      );
+    let newData = {
+      company: data.company,
+      location: data.location,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      title: data.title,
+      description: data.description
     }
-
-    else {
-      pool.query(
-        `Update experience SET studentID=?,company=?,location=?,startDate=?,endDate=?,title=?,description=? where experienceID = ?`,
-        [
-          data.id,
-          data.company,
-          data.location,
-          data.startDate,
-          data.endDate,
-          data.title,
-          data.description,
-          data.experienceID,
-        ],
-        (error, results) => {
-          if (error) {
-            callBack(error);
-          }
-          return callBack(null, results);
-        }
-      );
+    Student.update({ _id: data.id }, { experience: newData }, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
+      }
+      return callBack(null, results);
     }
+    );
   },
 
   getAllStudents: (callBack) => {
-    pool.query(
-      `SELECT * FROM studentprofile as SP
-          LEFT Join education as ed ON SP.studentID = ed.studentID
-          LEFT Join experience as ex ON SP.studentID = ex.studentID`,
-      [
-      ],
+    Student.find({},
       (error, results) => {
         if (error) {
           callBack(error);
         }
         return callBack(null, results);
-      }
-    );
-  },
-  getCompanyProfileDetails: (id, callBack) => {
-    pool.query(
-      `select * from companyprofile as CP INNER JOIN account as AC on CP.accountID = AC.accountID where CP.companyID= ? `,
-      [
-        id
-      ],
-      (error, results) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
-      }
-    );
-  },
-  updateCompanyProfilePic: (data, callBack) => {
-    console.log(data);
-    pool.query(
-      `UPDATE companyprofile SET profilePicURL=? where companyID = ?`,
-      [
-        data.profilePicURL,
-        data.id
-      ],
-      (error, results) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, data.profilePicURL);
       }
     );
   },
 
   updateStudentProfilePic: (data, callBack) => {
-    console.log(data);
-    pool.query(
-      `UPDATE studentprofile SET profilePicURL=? where studentID = ?`,
-      [
-        data.profilePicURL,
-        data.id
-      ],
-      (error, results) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, data.profilePicURL);
+    Student.update({ _id: data.id }, { profilePicURL: data.profilePicURL }, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
       }
-    );
-  },
-
-  updateCompanyDetails: (data, callBack) => {
-    console.log(data);
-    pool.query(
-      `UPDATE companyprofile SET name=? , description = ? , city= ? where companyID = ?`,
-      [
-        data.name,
-        data.description,
-        data.city,
-        data.companyID
-      ],
-      (error, results) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
-      }
+      return callBack(null, results);
+    }
     );
   },
 
   updateContactInformation: (data, callBack) => {
-    console.log(data);
-    pool.query(
-      `UPDATE account SET email=? , phone = ?  where accountID = ?`,
-      [
-        data.email,
-        data.phone,
-        data.accountID
-      ],
-      (error, results) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+    let newData = {
+      email: data.email,
+      phone: data.phone
+    }
+    Student.update({ _id: data.id }, newData, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
       }
+      return callBack(null, results);
+    }
     );
-  },
+  }
 }
