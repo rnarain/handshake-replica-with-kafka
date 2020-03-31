@@ -1,4 +1,5 @@
 const pool = require("../../config/database");
+const Job = require("../../Models/JobModel");
 
 module.exports = {
   createJob: (data, callBack) => {
@@ -24,23 +25,15 @@ module.exports = {
     );
   },
   getJobsByStudentID: (id,callBack) => {
-    pool.query(
-      `select cp.name,jb.companyID,jb.jobID,jb.location,jb.postedDate,jb.deadLineDate,jb.salary,jb.description,jb.category,jb.title 
-      from job AS jb 
-      INNER JOIN companyprofile AS cp 
-      ON jb.companyID = cp.companyID 
-      INNER JOIN jobapplication AS ja ON jb.jobID <> ja.jobID or ja.studentID <> ?
-`,
-      [
-        id
-      ],
-      (error, results, fields) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+    Job.aggregate([
+      { $unwind: '$jobApplicants'},
+      { $match: {'jobApplicants.studentID': {$ne: id}}}], (error, result) => {
+      if (error) {
+        callBack(error);
       }
-    );
+      console.log(result);
+      return callBack(null, result);
+    });
   },
 
    getJobsByCompanyID: (id,callBack) => {

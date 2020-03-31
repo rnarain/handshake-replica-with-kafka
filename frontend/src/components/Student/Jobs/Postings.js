@@ -4,11 +4,12 @@ import cookie from 'react-cookies';
 import PostingsNavbar from './PostingsNavbar';
 import JobList from './JobList';
 import backendServer from '../../../webConfig'
+import { connect } from 'react-redux';
+import { updateFilteredJobs } from "../../../js/actions/jobSearch.js";
 
 
 
-
-class Postings extends Component {
+class PostingsPage extends Component {
     constructor(props) {
         //Call the constrictor of Super classNameName i.e The Component
         super(props);
@@ -37,10 +38,12 @@ class Postings extends Component {
         //make a post request with the user data
         await axios.get(`${backendServer}/api/job/getJobsByStudentID/${localStorage.getItem('id')}`)
             .then(response => {
+                console.log(response);
                 this.setState({
                     jobList: response.data.data,
                     filteredJobList: response.data.data
                 })
+                this.props.updateFilteredJobs({jobs:this.state.jobList});
             }
             ).catch(ex => {
                 alert("error");
@@ -57,10 +60,10 @@ class Postings extends Component {
             filteredJobList: this.state.jobList
 
         })
+        this.props.updateFilteredJobs({jobs:this.state.jobList})
     }
 
     filterChangeHandler = (i) => {
-
         switch (i) {
             case 0:
                 this.setState({
@@ -119,11 +122,10 @@ class Postings extends Component {
         }
         this.setState({
             selectedfilters: selFilters,
-            filteredJobList: tempJobs
-
+            // filteredJobList: tempJobs
         })
 
-
+        this.props.updateFilteredJobs({jobs:tempJobs})
         return tempJobs;
     }
 
@@ -131,24 +133,26 @@ class Postings extends Component {
     searchChangeHandler = (e) => {
         let filteredJobs = this.buildSelectedFilterArray();
         if (e.target.value) {
-            this.setState({
-                filteredJobList: filteredJobs.filter((job) => {
+            this.props.updateFilteredJobs(
+                
+                { jobs :filteredJobs.filter((job) => {
                     return (job.title.replace(/\s+/g, '').toLowerCase().includes(e.target.value.replace(/\s+/g, '').toLowerCase()))
                 }
-                )
-            })
+                )}
+            )
         }
     }
 
     cityChangeHandler = (e) => {
         let filteredJobs = this.buildSelectedFilterArray();
         if (e.target.value) {
-            this.setState({
-                filteredJobList: filteredJobs.filter((job) => {
+            this.props.updateFilteredJobs(
+                {jobs:filteredJobs.filter((job) => {
                     return (job.location.replace(/\s+/g, '').toLowerCase().includes(e.target.value.replace(/\s+/g, '').toLowerCase()))
                 }
                 )
-            })
+            }
+            )
         }
     }
 
@@ -191,7 +195,7 @@ class Postings extends Component {
                         </div>
                     </div>
                     <div className="col-sm-12 card">
-                        <div className="box-part-container margin20"> <JobList jobList={this.state.filteredJobList} />
+                        <div className="box-part-container margin20"> <JobList />
                         </div>
                     </div>
                 </div>
@@ -199,5 +203,17 @@ class Postings extends Component {
         )
     }
 }
+const mapStateToProps = state => {
+    // return {
+    //     filteredJobs: state.studentProfileReducer.education,
+    //     experience: state.studentProfileReducer.experience
+    // };
+};
 
+function mapDispatchToProps(dispatch) {
+    return {
+        updateFilteredJobs: (data) => dispatch(updateFilteredJobs(data))
+    };
+}
+const Postings = connect(mapStateToProps, mapDispatchToProps)(PostingsPage);
 export default Postings;

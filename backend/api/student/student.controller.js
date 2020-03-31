@@ -14,7 +14,7 @@ const {
 
   const jwt = require('jsonwebtoken');
   const { secret } = require('../../config/configValues');
-  
+  var kafka = require('../../kafka/client');
   
   const { hashSync, genSaltSync, compareSync } = require("bcrypt");
   //const { sign } = require("jsonwebtoken");
@@ -118,6 +118,16 @@ var upload = multer({
           data: results
           });
       });
+      // kafka.make_request('student',req.body,(err, results) => {
+        //   if (err) {
+        //     console.log(err);
+        //     return;
+        //   }
+        //     return res.json({
+        //     success: 1,
+        //     data: results
+        //     });
+        // });
     },
 
       

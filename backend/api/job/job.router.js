@@ -14,7 +14,10 @@ const {
 //   updateUsers,
 //   deleteUser
 } = require("./job.controller");
-// router.get("/", checkToken, getUsers);s
+
+const passport = require('passport');
+let checkAuth = passport.authenticate('jwt', { session: false });
+
  router.post("/createJob", createJob);
  router.get("/getJobsByStudentID/:id",getJobsByStudentID);
  router.get("/getJobsByCompanyID/:id",getJobsByCompanyID);

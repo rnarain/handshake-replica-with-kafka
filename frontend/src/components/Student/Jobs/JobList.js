@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 // import SweetAlert from 'sweetalert-react';
 // import 'sweetalert/dist/sweetalert.css';
-// import Swal from 'sweetalert2'
-// import withReactContent from 'sweetalert2-react-content'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 import { jobTypes } from '../../../enum.js'
 import axios from 'axios';
 import backendServer from '../../../webConfig'
-
+import { connect } from 'react-redux';
+import { jobSearchPaginatinon } from "../../../js/actions/jobSearch.js";
 
 
 
@@ -18,13 +19,13 @@ import backendServer from '../../../webConfig'
 //     2: "Internship",
 //     3: "On-Campus"
 // }
-// const MySwal = withReactContent(Swal)
+ const MySwal = withReactContent(Swal)
 
 
 
 
 //create the Navbar Component
-class JobList extends Component {
+class JobListPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -65,9 +66,10 @@ class JobList extends Component {
                 selectedJob: []
             })
         }
+
+
     }
     showJobDetail = (e) => {
-        
         this.setState({
             selectedJob: e
         })
@@ -80,42 +82,42 @@ class JobList extends Component {
     }
 
     applyModal = () => {
-        // return (
-        //     MySwal.fire({
-        //         title: 'Upload Resume',
-        //         input: 'file',
-        //         confirmButtonText: 'Apply',
-        //         showCancelButton: true,
-        //         preConfirm: (file) => {
-        //             const data = new FormData() 
-        //             data.append('file', file)
-        //             axios.post(`${backendServer}/api/job/applyForJob?studentID=${localStorage.getItem('id')}&jobID=${this.state.selectedJob.jobID}`, data)
-        //                 .then(response => {
-        //                     if(response.status==201){
-        //                         this.setState({
-        //                             selectedJob: {
-        //                                 ...this.state.selectedJob,
-        //                                 applied:true
-        //                             }
-        //                         })
-        //                     }
-        //                 }
-        //                 ).catch(ex => {
-        //                    alert(ex);
-        //                 });
-        //         },
-        //     }).then((result) => {
-        //         if (result.value) {
-        //             MySwal.fire({
-        //                 icon: 'success',
-        //                 title: 'Applied',
-        //                 showConfirmButton: false,
-        //                 timer: 3000
-        //             })
-        //         }
+        return (
+            MySwal.fire({
+                title: 'Upload Resume',
+                input: 'file',
+                confirmButtonText: 'Apply',
+                showCancelButton: true,
+                preConfirm: (file) => {
+                    const data = new FormData() 
+                    data.append('file', file)
+                    axios.post(`${backendServer}/api/job/applyForJob?studentID=${localStorage.getItem('id')}&jobID=${this.state.selectedJob.jobID}`, data)
+                        .then(response => {
+                            if(response.status==201){
+                                this.setState({
+                                    selectedJob: {
+                                        ...this.state.selectedJob,
+                                        applied:true
+                                    }
+                                })
+                            }
+                        }
+                        ).catch(ex => {
+                           alert(ex);
+                        });
+                },
+            }).then((result) => {
+                if (result.value) {
+                    MySwal.fire({
+                        icon: 'success',
+                        title: 'Applied',
+                        showConfirmButton: false,
+                        timer: 3000
+                    })
+                }
 
-        //     })
-        // )
+            })
+        )
     }
 
 
@@ -149,16 +151,11 @@ class JobList extends Component {
             )
         })
 
-        let pages = this.props.jobList.length / 25;
-        if (this.props.jobList.length % 25 !== 0) {
-            pages++
-        }
-
 
         let links = [];
-        if (pages > 0) {
-            for (let i = 1; i <= pages; i++) {
-                links.push(<li className="page-item" key={i}><a className="page-link" href="#">
+        if (this.props.pages > 0) {
+            for (let i = 1; i <= this.props.pages; i++) {
+                links.push(<li className="page-item" key={i}><a className="page-link" onClick={()=>{this.props.jobSearchPaginatinon(i)}}>
                     {i}
                 </a></li>
                 )
@@ -221,5 +218,17 @@ class JobList extends Component {
         )
     }
 }
+const mapStateToProps = state => {
+    return {
+        jobList: state.jobSearchReducer.filteredJobs,
+        pages :  state.jobSearchReducer.pages
+    };
+};
 
+function mapDispatchToProps(dispatch) {
+     return {
+         jobSearchPaginatinon: (data) => dispatch(jobSearchPaginatinon(data))
+     };
+}
+const JobList = connect(mapStateToProps, mapDispatchToProps)(JobListPage);
 export default JobList;

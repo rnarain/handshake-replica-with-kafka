@@ -96,7 +96,17 @@ export  function handshakeMiddleWare({ dispatch }) {
                 console.log(ex);
             });
        }
-       
+       else if (action.type === CHANGE_CONTACT_INFORMATION) {
+        console.log(action.payload);
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+        await axios.post(`${backendServer}/api/student/updateContactInformation`, action.payload)
+            .then(response => {
+                 //update store
+                }
+            ).catch( ex =>{
+                console.log(ex);
+            });
+       }
        
       return next(action);
     };
