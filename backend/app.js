@@ -72,10 +72,14 @@ var jobRouter = require('./api/job/job.router');
 var eventRouter = require('./api/event/event.router');
 var jobApplicationRouter = require('./api/jobApplication/jobApplication.router');
 var studentRouter =  require('./api/student/student.router');
+var messageRouter =  require('./api/message/message.router');
+
 
 
 app.use('/api/account',accountRouter);
 app.use('/api/student',studentRouter);
+app.use('/api/message',messageRouter);
+
 
 app.use('/api/event',eventRouter);
 app.use('/api/job',jobRouter);
