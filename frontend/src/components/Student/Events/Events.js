@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
-// import BasicInfo from '../ProfileTabs/AllTabs/BasicInfo';
-// import AccountInfo from '../ProfileTabs/AllTabs/AccountInfo';
-// import CareerObjective from '../ProfileTabs/AllTabs/CareerObjective';
-// import Education from '../ProfileTabs/AllTabs/Education';
-// import Experience from '../ProfileTabs/AllTabs/Experience';
-// import Skills from '../ProfileTabs/AllTabs/Skills';
 import axios from 'axios';
 import {colleges ,majors, skills} from '../../../enum'
 import cookie from 'react-cookies';
 import {dateTimeToDate} from '../../../helperMethods'
 import EventsNavbar from './EventsNavbar';
 import backendServer from '../../../webConfig'
+import IndividualEvent from './IndividualEvent'
+import { paginate, pages } from '../../../helperFunctions/paginate'
 
 
 
@@ -26,7 +22,9 @@ class Events extends Component {
         this.state = {
             events: [],
             filteredevents: [],
-            buttonText:"+ RSVP"
+            buttonText:"+ RSVP",
+            pages: 0
+
         }
 
         this.nameFilterChangeHandler= this.nameFilterChangeHandler.bind(this);
@@ -41,12 +39,19 @@ class Events extends Component {
                 console.log(response);
                 this.setState({
                     events: response.data.data,
-                    filteredevents : response.data.data
+                    filteredevents : paginate(response.data.data, 1, 10),
+                    pages: pages(response.data.data, 10)
                 })
             }
             ).catch(ex => {
                 alert(ex);
             });
+    }
+
+    paginatinon = (e) => {
+        this.setState({
+            filteredRegistrations: paginate(this.state.events,e, 10)
+        })
     }
     nameFilterChangeHandler = (e) => {
         if(e.target.value === ""){
@@ -68,51 +73,23 @@ class Events extends Component {
         
     }
 
-    registerForEvent = (e) => {
-        const data={
-            eventID:e,
-            studentID: localStorage.getItem('id')
-        }
-        axios.post(`${backendServer}/api/event/registerForEvent`,data)
-            .then(response => {
-                this.setState({
-                    buttonText : "Registered"
-                })
-            }
-            ).catch(ex => {
-                alert(ex);
-            });
-
-        
-
-
-    }
+    
     render() {
         let events = this.state.filteredevents.map(event => {
             return (
-                <div className="box-part">
-                    <div className="card-body container-fluid">
-                        <div className="col-sm-10">
-                            <div className="row">
-                            <h4 className="card-title">{event.name}</h4>
-                            <p className="card-text">{event.description}</p>
-
-                            <div className="col-sm-12 nopadding">
-                            <p >{event.location} </p>
-                            <p > {dateTimeToDate(event.date)} at {event.time}</p>
-                             </div>
-                        </div>
-                        </div>
-                        <div className="col-sm-2">
-                            <div className="row">
-                            <button type="button" className="btn btn-outline-colored" onClick={()=>{this.registerForEvent(event.eventID)}} >{this.state.buttonText}</button>
-
-                        </div>
-                        </div>
-                        </div>
-                    </div>
-            )
+                < IndividualEvent event={event} />
+                )
         })
+
+        let links = [];
+        if (this.state.pages > 0) {
+            for (let i = 1; i <= this.state.pages; i++) {
+                links.push(<li className="page-item" key={i}><a className="page-link" onClick={() => { this.paginatinon(i) }}>
+                    {i}
+                </a></li>
+                )
+            }
+        }
         return (
             <div className="handshake-body">
                 <EventsNavbar/>
@@ -147,6 +124,9 @@ class Events extends Component {
                     </div>
                     <div className="card col-sm-9">
                         {events}
+                        <ul className="pagination">
+                        {links}
+                    </ul>
                     </div>
                 </div>
             </div>

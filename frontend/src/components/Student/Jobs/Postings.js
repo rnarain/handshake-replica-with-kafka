@@ -204,10 +204,10 @@ class PostingsPage extends Component {
     }
 }
 const mapStateToProps = state => {
-    // return {
-    //     filteredJobs: state.studentProfileReducer.education,
-    //     experience: state.studentProfileReducer.experience
-    // };
+    return {
+        // filteredJobs: state.studentProfileReducer.education,
+        // experience: state.studentProfileReducer.experience
+    };
 };
 
 function mapDispatchToProps(dispatch) {

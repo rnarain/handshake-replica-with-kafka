@@ -58,17 +58,17 @@ class ApplicationJobList extends Component {
 
         let jobs = this.props.jobList.map(job => {
             return (
-                <div className="row job"  key= {job.jobID} >
+                <div className="row job"  key= {job._id} >
                     <div className="col-sm-4">
                         <h5> {job.title}</h5>
                         <p className="smallText"> {job.name}</p>
                         <span className="greyText smallText">{jobTypes[job.category]}</span>
                     </div>
                     <div className="col-sm-4">
-                        <h5>Status :   {applicationStatus[job.status]}</h5>
+                        <h5>Status : {applicationStatus [job.jobApplicants.find(j=>j.studentID == localStorage.getItem('id')).status]}</h5>
                     </div>
                     <div className="col-sm-4">
-                        <h5> <i className="glyphicon glyphicon-ok"></i> Applied {job.applicationDate}</h5>
+                        <h5> <i className="glyphicon glyphicon-ok"></i> Applied {job.jobApplicants.find(j=>j.studentID == localStorage.getItem('id')).applicationDate}</h5>
                         {/* <p className="smallText"> {job.name}</p>
                         <span className="greyText smallText">{jobTypes[job.category]}</span> */}
                     </div>

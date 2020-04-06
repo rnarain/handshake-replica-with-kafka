@@ -31,7 +31,7 @@ const initialState = {
 function studentProfileReducer(state = initialState, action) {
     if(action.type === GET_STUDENT_DATA){
         console.log(action.payload);
-        return Object.assign({}, state, action.payload[0]);
+        return Object.assign({}, state, action.payload);
     }
     else if(action.type === CHANGE_NAME){
       console.log(action.payload);

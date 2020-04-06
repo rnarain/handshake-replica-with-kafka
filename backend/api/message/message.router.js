@@ -16,6 +16,8 @@ let checkAuth = passport.authenticate('jwt', { session: false });
 // router.get("/", checkToken, getUsers);
 //  router.post("/createStudent", createStudent);
  router.get("/getMessages/:id", getMessages);
+ router.post("/addMessage", addMessage);
+
 //  router.get("/getAllStudents", checkAuth,getAllStudents);
 
  

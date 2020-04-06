@@ -9,6 +9,8 @@ import axios from 'axios';
 import {colleges ,majors, skills} from '../../../enum'
 import cookie from 'react-cookies';
 import backendServer from '../../../webConfig'
+import { paginate, pages } from '../../../helperFunctions/paginate'
+
 
 
 
@@ -24,6 +26,8 @@ class Students extends Component {
             filteredStudents: [],
             collegeFilterArray:[],
             skillsFilterArray:[],
+            pages: 0
+
         }
 
         this.nameFilterChangeHandler= this.nameFilterChangeHandler.bind(this);
@@ -35,18 +39,28 @@ class Students extends Component {
     async componentWillMount() {
         axios.defaults.withCredentials = true;
         //make a post request with the user data
-        await axios.get(`${backendServer}/api/account/getAllStudents`)
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+        await axios.get(`${backendServer}/api/student/getAllStudents`)
             .then(response => {
                 console.log(response);
                 this.setState({
                     students: response.data.data,
-                    filteredStudents : response.data.data
+                    filteredStudents : response.data.data,
+                    pages: pages(response.data.data, 10)
+
                 })
             }
             ).catch(ex => {
                 alert(ex);
             });
     }
+
+    paginatinon = (e) => {
+        this.setState({
+            filteredRegistrations: paginate(this.state.students,e, 10)
+        })
+    }
+
     nameFilterChangeHandler = (e) => {
         let filteredstudents = this.state.students;
         if (e.target.value) {
@@ -199,10 +213,17 @@ class Students extends Component {
   </div>
             )
         }) 
-//         <div className="form-check">
-//     <input type="checkbox" className="form-check-input" id="exampleCheck1">
-//     <label className="form-check-label" for="exampleCheck1">Check me out</label>
-//   </div>
+
+        let links = [];
+        if (this.state.pages > 0) {
+            for (let i = 1; i <= this.state.pages; i++) {
+                links.push(<li className="page-item" key={i}><a className="page-link" onClick={() => { this.paginatinon(i) }}>
+                    {i}
+                </a></li>
+                )
+            }
+        }
+
         return (
             <div className="handshake-body">
                 <div className=" col-sm-10 col-sm-offset-1 profile-container card-columns">
@@ -268,6 +289,9 @@ class Students extends Component {
                     </div>
                     <div className="card col-sm-9">
                         {students}
+                        <ul className="pagination">
+                        {links}
+                    </ul>
                     </div>
                 </div>
             </div>

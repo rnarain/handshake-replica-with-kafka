@@ -8,7 +8,7 @@ import { jobTypes } from '../../../enum.js'
 import axios from 'axios';
 import backendServer from '../../../webConfig'
 import { connect } from 'react-redux';
-import { jobSearchPaginatinon } from "../../../js/actions/jobSearch.js";
+import { jobSearchPaginatinon , jobSearchSort } from "../../../js/actions/jobSearch.js";
 
 
 
@@ -32,9 +32,14 @@ class JobListPage extends Component {
             jobList: [],
             selectedJob: {},
             selectedPageNumber: 0,
+            sortOrder:1,
+            sortField:'location'
 
         }
         this.showJobDetail = this.showJobDetail.bind(this);
+        this.sortColumnChangeHandler = this.sortColumnChangeHandler.bind(this);
+        this.sortOrderChangeHandler = this.sortOrderChangeHandler.bind(this);
+
         this.paginationHandler = this.paginationHandler.bind(this);
         this.applyModal = this.applyModal.bind(this);
     }
@@ -74,6 +79,24 @@ class JobListPage extends Component {
             selectedJob: e
         })
     }
+    sortColumnChangeHandler = (e)=>{
+        this.setState({
+            sortField: e.target.value
+        })
+        this.props.jobSearchSort({
+            sortField : e.target.value,
+            sortOrder :this.state.sortOrder
+        })
+    }
+    sortOrderChangeHandler = (e)=>{
+        this.setState({
+            sortOrder: e.target.value
+        })
+        this.props.jobSearchSort({
+            sortField : this.state.sortField,
+            sortOrder : e.target.value
+        })
+    }
 
     paginationHandler = (e) => {
         this.setState({
@@ -91,7 +114,7 @@ class JobListPage extends Component {
                 preConfirm: (file) => {
                     const data = new FormData() 
                     data.append('file', file)
-                    axios.post(`${backendServer}/api/job/applyForJob?studentID=${localStorage.getItem('id')}&jobID=${this.state.selectedJob.jobID}`, data)
+                    axios.post(`${backendServer}/api/job/applyForJob?studentID=${localStorage.getItem('id')}&jobID=${this.state.selectedJob._id}&name=Narain`, data)
                         .then(response => {
                             if(response.status==201){
                                 this.setState({
@@ -141,7 +164,7 @@ class JobListPage extends Component {
 
         let jobs = this.props.jobList.map(job => {
             return (
-                <div className="row job" key={job.jobID} onClick={() => { this.showJobDetail(job) }} >
+                <div className="row job" key={job._id} onClick={() => { this.showJobDetail(job) }} >
                     <div className="col-sm-12">
                         <h5> {job.title}</h5>
                         <p className="smallText"> {job.name} - {job.location}</p>
@@ -162,26 +185,35 @@ class JobListPage extends Component {
             }
         }
 
+        let sortColumnName = 
+        (
+           <select onChange={this.sortColumnChangeHandler} className="form-control sort-select">
+           <option value="location" >location</option>
+           <option value="postedDate">posted</option>
+           <option value="deadLineDate">deadline</option>
+           </select>
+       );
 
-        //         const pageLinks = [];
-        //         if(pages > 0){
-        // for(let i =1; i <pages ; i++){
-        //             return(
-        //                 pageLinks.push(<li class="page-item"><a class="page-link" href="#">i</a></li>)
-        //             )
-
-        //                             }
-        //         }
-
-
-
-
-
-        //if Cookie is set render Logout Button
+       let sortOrder = 
+        (
+           <select onChange={this.sortOrderChangeHandler} className="form-control sort-select">
+           <option value="1" >asc</option>
+           <option value="-1">desc</option>
+           </select>
+       );
         return (
+
+           
 
             <div className="row jobList">
                 <div className="col-sm-4 jobListLeft">
+                <div className="row">
+                <div className="col-sm-5 greyText"><i className="glyphicon glyphicon-sort"></i> Sort</div>
+
+                <div className="col-sm-3 ">{sortColumnName}</div>
+                <div className="col-sm-4">{sortOrder}</div>
+                    </div>
+
                     {jobs}
                     {/* pagination */}
                     <nav>
@@ -227,7 +259,8 @@ const mapStateToProps = state => {
 
 function mapDispatchToProps(dispatch) {
      return {
-         jobSearchPaginatinon: (data) => dispatch(jobSearchPaginatinon(data))
+         jobSearchPaginatinon: (data) => dispatch(jobSearchPaginatinon(data)),
+         jobSearchSort: (data) => dispatch(jobSearchSort(data)),
      };
 }
 const JobList = connect(mapStateToProps, mapDispatchToProps)(JobListPage);

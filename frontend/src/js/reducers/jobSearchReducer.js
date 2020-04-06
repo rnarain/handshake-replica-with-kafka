@@ -1,5 +1,7 @@
-import { UPDATE_FILTERED_JOBS , JOB_SEARCH_PAGINATION } from '../constants/action-types';
+import { UPDATE_FILTERED_JOBS , JOB_SEARCH_PAGINATION ,JOB_SEARCH_SORT} from '../constants/action-types';
 import {paginate, pages} from '../../helperFunctions/paginate'
+import {dynamicSort} from '../../helperFunctions/dynamicSort'
+
   const initialState = {
       jobs : [{
         companyID : null,
@@ -40,6 +42,12 @@ import {paginate, pages} from '../../helperFunctions/paginate'
             filteredJobs: paginate(state.jobs,action.payload,10)
         });
      }
+     else if(action.type === JOB_SEARCH_SORT){
+      console.log(action.payload);
+      return Object.assign({}, state, {
+          filteredJobs: state.jobs.sort(dynamicSort(action.payload.sortField ,action.payload.sortOrder ))
+      });
+   }
       return state;
     }
     

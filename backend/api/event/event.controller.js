@@ -1,14 +1,10 @@
 const {
   createEvent,
-  // getJobsByStudentID,
   getEventsByCompanyID,
   getAllEventsByStudentID,
   registerForEvent,
-  // deleteJob,
   getParticpantListByEventID,
   getAllEventRegistrationsByStudentID
-  // changeApplicationStatus,
-  // applyForJob
 } = require("./event.service");
 
 module.exports = {

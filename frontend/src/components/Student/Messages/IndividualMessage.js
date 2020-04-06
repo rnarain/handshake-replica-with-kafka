@@ -14,29 +14,76 @@ class IndividualMessage extends Component {
         this.state = {
             selectedMessage: {},
             newMessage:null,
-            typing:false
+            typing:false,
+            chatFrom:null,
+            messageId:null,
+            individualMessage:{
+                chats:[],
+                user1:{
+                  id:null,
+                  name:null
+                },
+                user2:{
+                  id:null,
+                  name:null
+                }
+            }
         }
     }
     //Call the Will Mount to set the auth Flag to false
      componentDidUpdate() {
+        if(this.state.messageId !=this.props.individualMessage._id ){
+            if(this.props.individualMessage.user1.id!==localStorage.getItem('id')){
+                this.setState({
+                    chatFrom :this.props.individualMessage.user1.id,
+                    messageId : this.props.individualMessage._id,
+                    individualMessage : this.props.individualMessage
+
+                })
+             }
+             else{
+                this.setState({
+                    chatFrom :this.props.individualMessage.user2.id,
+                    messageId : this.props.individualMessage._id,
+                    individualMessage : this.props.individualMessage
+
+
+                }) 
+             }
+        }
     }
 
-    submitEdit = (e) => {
-        // const data = {
-        //     careerObjective: this.state.careerObjective,
-        //     id:localStorage.getItem('id')
-        // }
-        // this.props.changeObjective(data);
-        // axios.post(`${backendServer}/api/account/updateStudentObjective`, data)
-        //     .then(response => {
-        //         console.log(response);
-        //         if (response.status == 200) {
-        //             //
-        //         }
-        //     }
-        //     ).catch(ex => {
-        //         alert(ex);
-        //     });
+    submitEdit = () => {
+        var data = {
+            from :localStorage.getItem('id'),
+            to : this.state.chatFrom,
+            chat : this.state.newMessage,
+            id : this.state.messageId
+        }
+        
+        
+        axios.post(`${backendServer}/api/message/addMessage`, data)
+            .then(response => {
+                console.log(response);
+                if (response.status == 200) {
+                    let newIM = this.state.individualMessage;
+                    let temp = newIM.chats.concat({
+                        from :localStorage.getItem('id'),
+                        to : this.state.chatFrom,
+                        chat : this.state.newMessage,
+                        time: new Date()
+                    })
+                    this.setState({
+                        individualMessage : {
+                            chats : temp
+                        },
+                        newMessage:""
+                    })
+                }
+            }
+            ).catch(ex => {
+                alert(ex);
+            });
         this.setState({
             typing: false,
         })
@@ -56,8 +103,7 @@ class IndividualMessage extends Component {
       }
 
     render(){
-      let chats = this.props.individualMessage.chats.map(chat => {
-          console.log(chat.to);
+      let chats = this.state.individualMessage.chats.map(chat => {
         if(chat.to === localStorage.getItem('id')){
             return (
                 <div className="incoming_msg">
@@ -65,7 +111,7 @@ class IndividualMessage extends Component {
                 <div className="received_msg">
                   <div className="received_withd_msg">
                     <p>{chat.chat}</p>
-                    <span className="time_date">{dateTimeToDate(chat.time)}</span></div>
+                    <span className="time_date float-left">{dateTimeToDate(chat.time)}</span></div>
                 </div>
               </div>
             )
@@ -75,12 +121,13 @@ class IndividualMessage extends Component {
                 <div className="outgoing_msg">
               <div className="sent_msg">
               <p>{chat.chat}</p>
-                    <span className="time_date">{dateTimeToDate(chat.time)}</span></div>
+                    <span className="time_date float-right">{dateTimeToDate(chat.time)}</span></div>
             </div>
             )
         }
     });
 
+    
 
 
     let buttons= null;

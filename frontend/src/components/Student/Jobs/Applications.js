@@ -32,7 +32,7 @@ class Applications extends Component {
 
         axios.defaults.withCredentials = true;
         //make a post request with the user data
-        await axios.get(`${backendServer}/api/jobApplication/getAppliedJobsByStudentID/${localStorage.getItem('id')}`)
+        await axios.get(`${backendServer}/api/job/getAppliedJobsByStudentID/${localStorage.getItem('id')}`)
             .then(response => {
                 this.setState({
                     jobList: response.data.data,
@@ -95,7 +95,7 @@ class Applications extends Component {
         let tempJobs;
         if (selFilters.length > 0) {
             tempJobs = this.state.jobList.filter((job) => {
-                return (selFilters.includes(job.status))
+                return (selFilters.includes(job.jobApplicants.find(j=>j.studentID == localStorage.getItem('id')).status))
             }
             )
         }

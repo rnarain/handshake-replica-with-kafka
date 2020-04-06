@@ -5,7 +5,8 @@ const {
   deleteJob,
   getApplicantListByJobID,
   changeApplicationStatus,
-  applyForJob
+  applyForJob,
+  getAppliedJobsByStudentID
 } = require("./job.service");
 
 
@@ -14,7 +15,7 @@ const url = require('url');
 var multer = require('multer')
 var storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, '../Frontend/public/Uploads/Resumes')
+    cb(null, '../frontend/public/Uploads/Resumes')
   },
   filename(req, file, cb) {
     cb(null, file.originalname)
@@ -141,8 +142,21 @@ module.exports = {
       });
     });
   },
-
+  getAppliedJobsByStudentID: (req, res) => {
+    const id = req.params.id;
+    getAppliedJobsByStudentID(id,(err, results) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      return res.json({
+        success: 1,
+        data: results
+      });
+    });
+  },
   applyForJob: (req, res) => {
+    console.log("aya");
     upload(req, res, function (err) {
       if (err) {
         return res.status(500).json(err);
@@ -153,6 +167,7 @@ module.exports = {
         studentID: queryObject.studentID,
         jobID: queryObject.jobID,
         resumeURL:  "/Uploads/Resumes/" +req.file.originalname,
+        name:queryObject.name
       }
       applyForJob(data, (err, results) => {
         if (err) {

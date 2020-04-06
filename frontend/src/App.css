@@ -482,7 +482,7 @@ img{ max-width:100%;}
   display: inline-block;
   padding: 0 0 0 10px;
   vertical-align: top;
-  width: 92%;
+  max-width: 92%;
  }
  .received_withd_msg p {
   background: #ebebeb none repeat scroll 0 0;
@@ -498,6 +498,13 @@ img{ max-width:100%;}
   display: block;
   font-size: 12px;
   margin: 8px 0 0;
+}
+
+.float-left{
+  float:left
+}
+.float-right{
+  float:right
 }
 .received_withd_msg { width: 80%;}
 .mesgs {
@@ -517,7 +524,7 @@ img{ max-width:100%;}
 .outgoing_msg{ overflow:hidden; margin:26px 0 26px;}
 .sent_msg {
   float: right;
-  width: 70%;
+  max-width: 70%;
 }
 .input_msg_write input {
   background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
@@ -551,3 +558,12 @@ img{ max-width:100%;}
 .white-back{
   background-color: white;
 }
+
+.sort-select{
+    padding: 0px 8px;
+    font-size: 13px;
+    width:80px;
+    height:25px;
+    background-color:#f7f7f7 ;
+}
+

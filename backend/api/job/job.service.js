@@ -25,9 +25,18 @@ module.exports = {
     );
   },
   getJobsByStudentID: (id,callBack) => {
-    Job.aggregate([
-      { $unwind: '$jobApplicants'},
-      { $match: {'jobApplicants.studentID': {$ne: id}}}], (error, result) => {
+    Job.find({ 'jobApplicants.studentID':{$ne: id}}, (error, result) => {
+      if (error) {
+        callBack(error);
+      }
+      console.log(result);
+      return callBack(null, result);
+    });
+
+  },
+
+   getJobsByCompanyID: (id,callBack) => {
+    Job.find({ companyID: id }, (error, result) => {
       if (error) {
         callBack(error);
       }
@@ -36,35 +45,6 @@ module.exports = {
     });
   },
 
-   getJobsByCompanyID: (id,callBack) => {
-    pool.query(
-      `select companyID,jobID,location,postedDate,deadLineDate,salary,description,category,title 
-      from job where companyID = ?
-`,
-      [
-       id
-      ],
-      (error, results, fields) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
-      }
-    );
-  },
-
-  deleteJob: (id, callBack) => {
-    pool.query(
-      `delete from job where jobID = ?`,
-      [id],
-      (error, results, fields) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
-      }
-    );
-  },
 
   getApplicantListByJobID: (id,callBack) => {
     pool.query(
@@ -98,23 +78,30 @@ module.exports = {
       }
     );
   },
-  applyForJob: (data, callBack) => {
-    pool.query(
-      `insert into jobapplication(jobID,studentID,status,resumeURL) 
-                values(?,?,?,?)`,
-      [
-        data.jobID,
-        data.studentID,
-        0,
-        data.resumeURL,
-      ],
-      (error, results, fields) => {
-        console.log(results);
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+  getAppliedJobsByStudentID: (id,callBack) => {
+    Job.find({ 'jobApplicants.studentID': id }, (error, result) => {
+      if (error) {
+        callBack(error);
       }
+      console.log(result);
+      return callBack(null, result);
+    });
+  },
+  
+  applyForJob: (data, callBack) => {
+    let newApplication = {
+      studentID: data.studentID,
+      studentName: data.name,
+      status: 0,
+      applicationDate: new Date().toISOString(),
+      resumeURL: data.resumeURL
+    }
+    Job.update({ _id: data.jobID },  { $push: { jobApplicants: newApplication  } }, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
+      }
+      return callBack(null, results);
+    }
     );
   },
 }

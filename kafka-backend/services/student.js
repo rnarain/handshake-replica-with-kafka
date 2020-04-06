@@ -2,8 +2,8 @@ const Student = require('../Models/StudentModel');
 
 function handle_request(msg, callback) {
   var res = {};
-
-  if (msg.path === "get_student_details") {
+  console.log(msg);
+    if (msg.path === "get_student_details") {
     Student.findById(msg.id, (error, result) => {
             if (error) {
                 callback(error);

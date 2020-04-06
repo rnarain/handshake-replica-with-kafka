@@ -7,7 +7,8 @@ const {
   deleteJob,
   getApplicantListByJobID,
   changeApplicationStatus,
-  applyForJob
+  applyForJob,
+  getAppliedJobsByStudentID
 //   login,
 //   getUserByUserId,
 //   getUsers,
@@ -23,7 +24,9 @@ let checkAuth = passport.authenticate('jwt', { session: false });
  router.get("/getJobsByCompanyID/:id",getJobsByCompanyID);
  router.post("/applyForJob",applyForJob);
  router.get("/getApplicantListByJobID/:id",getApplicantListByJobID);
- router.delete("/deleteJob/:id",deleteJob);
+ router.get("/getAppliedJobsByStudentID/:id",getAppliedJobsByStudentID);
+
+//  router.delete("/deleteJob/:id",deleteJob);
  router.post("/changeApplicationStatus",changeApplicationStatus);
 
 

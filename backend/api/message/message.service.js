@@ -73,19 +73,22 @@ module.exports = {
     });
   },
 
-  // updateStudentName: (data, callBack) => {
-  //   var newData = {
-  //     fname: data.fname,
-  //     lname: data.lname
-  //   }
-  //   Student.update({ _id: data.id }, newData, { upsert: false }, (error, results) => {
-  //     if (error) {
-  //       callBack(error);
-  //     }
-  //     return callBack(null, results);
-  //   }
-  //   );
-  // },
+  addMessage: (data, callBack) => {
+    console.log(data);
+    var newChat = {
+      from : data.from,
+      to : data.to,
+      chat : data.chat,
+      time : new Date().toISOString()
+    }
+    Message.update({ _id: data.id }, {$push : { chats: newChat } }, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
+      }
+      return callBack(null, results);
+    }
+    );
+  },
 
   // updateStudentSkills: (data, callBack) => {
   //   Student.update({ _id: data.id }, { skills: data.skills }, { upsert: false }, (error, results) => {

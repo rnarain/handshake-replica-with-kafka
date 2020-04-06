@@ -1,4 +1,6 @@
 const pool = require("../../config/database");
+const Event = require("../../Models/EventModel");
+
 
 module.exports = {
   createEvent: (data, callBack) => {
@@ -25,54 +27,36 @@ module.exports = {
   },
 
   registerForEvent: (data, callBack) => {
-    pool.query(
-      `insert into eventparticipant(studentID,eventID) 
-                values(?,?)`,
-      [
-        data.studentID,
-        data.eventID,
-      ],
-      (error, results, fields) => {
-        console.log(results);
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+    let newParticipant = {
+      studentID: data.studentID,
+      name: data.name,
+    }
+    Event.update({ _id: data.eventID },  { $push: { participants: newParticipant  } }, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
       }
+      return callBack(null, results);
+    }
     );
   },
   getAllEventsByStudentID: (id,callBack) => {
-    pool.query(
-      `select * from event AS et 
-`,
-      [
-        id
-      ],
-      (error, results, fields) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+    Event.find({ 'participants.studentID':{$ne: id}}, (error, result) => {
+      if (error) {
+        callBack(error);
       }
-    );
+      console.log(result);
+      return callBack(null, result);
+    });
   },
 
   getAllEventRegistrationsByStudentID: (id,callBack) => {
-    pool.query(
-      `select * from eventparticipant as ep
-      INNER JOIN event as et ON ep.eventID = et.eventID
-      where studentID = ?
-`,
-      [
-        id
-      ],
-      (error, results) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+    Event.find({ 'participants.studentID': id }, (error, result) => {
+      if (error) {
+        callBack(error);
       }
-    );
+      console.log(result);
+      return callBack(null, result);
+    });
   },
 
    getEventsByCompanyID: (id,callBack) => {
