@@ -5,8 +5,12 @@ const {
   updateStudentName,
   updateStudentProfilePic,
   updateStudentObjective,
-  addUpdateStudentEducation,
-  addUpdateStudentExperience,
+  addEducation,
+  updateEducation,
+  deleteEducation,
+  addExperience,
+  deleteExperience,
+  updateExperience,
   updateStudentSkills,
   updateContactInformation,
   getAllStudents,
@@ -188,10 +192,9 @@ module.exports = {
       });
     });
   },
-
-  addUpdateStudentEducation: (req, res) => {
+  updateEducation: (req, res) => {
     const body = req.body;
-    addUpdateStudentEducation(body, (err, results) => {
+    updateEducation(body, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -206,9 +209,77 @@ module.exports = {
     });
   },
 
-  addUpdateStudentExperience: (req, res) => {
+  deleteEducation: (req, res) => {
     const body = req.body;
-    addUpdateStudentExperience(body, (err, results) => {
+    deleteEducation(body, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
+      }
+      return res.status(200).json({
+        success: 1,
+        data: results
+      });
+    });
+  },
+
+  addEducation: (req, res) => {
+    const body = req.body;
+    addEducation(body, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
+      }
+      return res.status(200).json({
+        success: 1,
+        data: results
+      });
+    });
+  },
+
+  updateExperience: (req, res) => {
+    const body = req.body;
+    updateExperience(body, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
+      }
+      return res.status(200).json({
+        success: 1,
+        data: results
+      });
+    });
+  },
+
+  deleteExperience: (req, res) => {
+    const body = req.body;
+    deleteExperience(body, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
+      }
+      return res.status(200).json({
+        success: 1,
+        data: results
+      });
+    });
+  },
+
+  addExperience: (req, res) => {
+    const body = req.body;
+    addExperience(body, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({

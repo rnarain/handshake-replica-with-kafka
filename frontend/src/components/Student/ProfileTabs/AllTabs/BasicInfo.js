@@ -4,6 +4,8 @@ import {colleges ,majors,degreeTypes} from '../../../../enum'
 import backendServer from '../../../../webConfig'
 import {connect} from 'react-redux'
 import { changename } from "../../../../js/actions/studentProfile.js";
+import {dateTimeToDate} from '../../../../helperMethods';
+
 
 
 
@@ -14,17 +16,17 @@ class BasicInfoPage extends Component {
         super(props);
         //maintain the state required for this component
         this.state = {
-            fname:"",
-            lname:"",
+            fname:null,
+            lname:null,
             college:"",
             degreeType : "",
             yearOfPassing:"",
             major:"",
             gpa:"",
-            profilePicURL:"",
+            profilePicURL:null,
             flag : true,
             edit:false,
-            profileImg:""
+            profileImg:null
 
         }
 
@@ -34,10 +36,17 @@ class BasicInfoPage extends Component {
     }
 
         componentDidUpdate() {
-            if(this.props.fname!=this.state.fname){
+            if(this.props.fname!=this.state.fname || this.props.profilePicURL!=this.state.profilePicURL ){
+                console.log(this.props.education);
                 this.setState({
                     fname : this.props.fname,
                     lname : this.props.lname,
+                    college: this.props.education[0].college,
+                    yearOfPassing: this.props.education[0].yearOfPassing,
+                    degreeType: this.props.education[0].degreeType,
+                    major: this.props.education[0].major,
+                    gpa: this.props.education[0].gpa,
+                    profilePicURL : this.props.profilePicURL
                 })
             }
             
@@ -143,12 +152,12 @@ class BasicInfoPage extends Component {
                 {editButton}
                </div>
                <div className=" text-center">
-               <p><img className="img-fluid img-circle profile-pic" src={this.props.profilePicURL} alt="No profile picture available" /></p>
-                <h4 className="card-title">{this.props.fname} {this.props.lname}</h4>
-                <h5 className="card-text">{colleges[this.props.college]}</h5>
-                <h5 className="card-text">{degreeTypes[this.props.degreeType]} , { majors[this.props.major]} </h5>
-                <p >Graduates {this.props.yearOfPassing} </p>
-                <p > GPA : {this.props.gpa} / 4 </p>
+               <p><img className="img-fluid img-circle profile-pic" src={this.state.profilePicURL} alt="No profile picture available" /></p>
+                <h4 className="card-title">{this.state.fname} {this.state.lname}</h4>
+                <h5 className="card-text">{colleges[this.state.college]}</h5>
+                <h5 className="card-text">{degreeTypes[this.state.degreeType]} , { majors[this.state.major]} </h5>
+                <p >Graduates {dateTimeToDate(this.state.yearOfPassing)} </p>
+                <p > GPA : {this.state.gpa} / 4 </p>
                 </div>
             </div>
         )
@@ -160,12 +169,8 @@ const mapStateToProps = state => {
     return {
         fname: state.studentProfileReducer.fname,
         lname: state.studentProfileReducer.lname,
-        college: state.studentProfileReducer.education.college,
-        yearOfPassing: state.studentProfileReducer.education.yearOfPassing,
-        degreeType: state.studentProfileReducer.education.degreeType,
-        major: state.studentProfileReducer.education.major,
-        gpa: state.studentProfileReducer.education.gpa,
-        profilePicURL: state.studentProfileReducer.profilePicURL
+        profilePicURL: state.studentProfileReducer.profilePicURL,
+        education : state.studentProfileReducer.education
     };
 };
 

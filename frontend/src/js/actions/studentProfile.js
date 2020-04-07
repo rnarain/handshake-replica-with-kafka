@@ -1,5 +1,5 @@
 import {GET_STUDENT_DATA, CHANGE_NAME ,CHANGE_OBJECTIVE ,CHANGE_CONTACT_INFORMATION ,CHANGE_EDUCATION,CHANGE_EXPERIENCE,
-CHANGE_SKILLS  } from "../constants/action-types";
+CHANGE_SKILLS , DELETE_EXPERIENCE , DELETE_EDUCATION ,ADD_EXPERIENCE ,ADD_EDUCATION } from "../constants/action-types";
 
 export function getStudentData(payload) {
   console.log("dispatching the getStudentData action")
@@ -34,4 +34,20 @@ export function changeObjective(payload) {
   export function changeSkills(payload) {
     console.log("dispatching the change skills action")
     return { type: CHANGE_SKILLS, payload };
+  }
+  export function addExperience(payload) {
+    console.log("dispatching the addExperience action")
+    return { type: ADD_EXPERIENCE, payload };
+  }
+  export function addEducation(payload) {
+    console.log("dispatching the addEducation action")
+    return { type: ADD_EDUCATION, payload };
+  }
+  export function deleteExperience(payload) {
+    console.log("dispatching the DELETE_EXPERIENCE action")
+    return { type: DELETE_EXPERIENCE, payload };
+  }
+  export function deleteEducation(payload) {
+    console.log("dispatching the DELETE_EDUCATION action")
+    return { type: DELETE_EDUCATION, payload };
   }

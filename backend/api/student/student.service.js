@@ -107,7 +107,7 @@ module.exports = {
     );
   },
 
-  addUpdateStudentEducation: (data, callBack) => {
+  addEducation: (data, callBack) => {
     let newData = {
       college: data.college,
       major: data.major,
@@ -116,7 +116,7 @@ module.exports = {
       gpa: data.gpa,
       degreeType: data.degreeType,
     }
-    Student.update({ _id: data.id }, { education: newData }, { upsert: false }, (error, results) => {
+    Student.update({ _id: data.id }, { $push : { education: newData }  }, { upsert: false }, (error, results) => {
       if (error) {
         callBack(error);
       }
@@ -125,7 +125,37 @@ module.exports = {
     );
   },
 
-  addUpdateStudentExperience: (data, callBack) => {
+  updateEducation: (data, callBack) => {
+    Student.update({ _id : data.id , 'education._id' : data.educationId}, 
+    { "$set": 
+      {
+        'education.$.college': data.college,
+        'education.$.major': data.major,
+        'education.$.yearOfStarting': data.yearOfStarting,
+        'education.$.yearOfPassing': data.yearOfPassing,
+        'education.$.gpa': data.gpa,
+        'education.$.degreeType': data.degreeType,
+      }  
+    },  (error, results) => {
+      if (error) {
+        callBack(error);
+      }
+      return callBack(null, results);
+    }
+    );
+  },
+  deleteEducation: (data, callBack) => {
+      Student.update({ _id: data.id },
+        { "$pull": { 'education': { _id : data.educationId } } },
+        (error, result) => {
+     
+      if (error) {
+        callBack(error);
+      }
+      return callBack(null, result);
+    });
+  },
+  addExperience: (data, callBack) => {
     let newData = {
       company: data.company,
       location: data.location,
@@ -134,7 +164,7 @@ module.exports = {
       title: data.title,
       description: data.description
     }
-    Student.update({ _id: data.id }, { experience: newData }, { upsert: false }, (error, results) => {
+    Student.update({ _id: data.id }, { $push : { experience: newData }  }, { upsert: false }, (error, results) => {
       if (error) {
         callBack(error);
       }
@@ -143,6 +173,38 @@ module.exports = {
     );
   },
 
+  updateExperience :(data,callBack)=>{
+
+    Student.update({ _id : data.id , 'experience._id' : data.experienceId}, 
+    { "$set": 
+      {
+        'experience.$.company': data.company,
+        'experience.$.location': data.location,
+        'experience.$.startDate': data.startDate,
+        'experience.$.endDate': data.endDate,
+        'experience.$.title': data.title,
+        'experience.$.description': data.description
+      }  
+    },  (error, results) => {
+      if (error) {
+        callBack(error);
+      }
+      return callBack(null, results);
+    }
+    );
+  },
+  
+  deleteExperience: (data, callBack) => {
+    Student.update({ _id: data.id },
+      { "$pull": { 'experience': { _id : data.experienceId } } },
+      (error, result) => {
+   
+    if (error) {
+      callBack(error);
+    }
+    return callBack(null, result);
+  });
+},
   getAllStudents: (callBack) => {
     Student.find({},
       (error, results) => {

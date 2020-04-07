@@ -8,7 +8,7 @@ import Skills from '../ProfileTabs/AllTabs/Skills';
 import axios from 'axios';
 import backendServer from "../../../webConfig";
 import { connect } from 'react-redux';
-import { getStudentData } from "../../../js/actions/studentProfile.js";
+import { getStudentData , addEducation ,addExperience  } from "../../../js/actions/studentProfile.js";
 
 
 
@@ -22,14 +22,7 @@ class HomePage extends Component {
             basicinfo: "",
             skills: "",
             careerObjective: "",
-            education: {
-                college : null,
-                yearOfPassing : null,
-                major : null,
-                yearOfStarting : null,
-                gpa : null,
-                degreeType : null
-            },
+            education: [],
             accountInfo: {},
             experience: [],
             editable: false
@@ -46,13 +39,13 @@ class HomePage extends Component {
     }
 
     componentDidUpdate() {
-        if (this.props.education.college !== this.state.education.college) {
+        if (this.props.education.length !== this.state.education.length) {
             this.setState({
                 education: this.props.education
             })
         }
 
-        if (this.props.experience.company !== this.state.experience.company) {
+        if (this.props.experience.length !== this.state.experience.length) {
             this.setState({
                 experience: this.props.experience
             })
@@ -61,66 +54,67 @@ class HomePage extends Component {
 
 
     AddEducationHandler = (e) => {
-        this.setState({
-            education: this.state.education.concat({
-                educationID: "",
-                studentID: "",
-                college: "",
-                major: "",
-                yearOfStarting: null,
-                yearOfPassing: null,
-                gpa: "",
-                degreeType: "",
+        this.props.addEducation({
+                _id: null,
+                college : null,
+                yearOfPassing : null,
+                major : null,
+                yearOfStarting : null,
+                gpa : null,
+                degreeType : null,
                 add: true
-            })
         })
     }
 
     AddExperienceHandler = (e) => {
-        this.setState({
-            experience: this.state.experience.concat({
-                experienceID: "",
-                company: "",
-                location: "",
-                startDate: "",
-                endDate: "",
-                title: "",
-                description: "",
+        this.props.addExperience({
+                _id: null,
+                company: null,
+                location: null,
+                startDate: null,
+                endDate: null,
+                title:null,
+                description: null,
                 add: true
-            })
         })
     }
 
     render() {
-        let  educationTabs= null;
-        if(this.state.education.college){
-            educationTabs= <Education education={this.state.education} editable={this.state.editable} />
-        }
-        else if (this.state.editable){
-            educationTabs = <button onClick={this.AddEducationHandler} className="btn btn-info form-control edit-button">Add Education</button>
-        }
-
-        let  experienceTabs= null;
-        if(this.state.experience.company){
-            experienceTabs= <Experience Experience={this.state.experience} editable={this.state.editable} />
-        }
-        else if (this.state.editable){
-            experienceTabs = <button onClick={this.AddExperienceHandler} className="btn btn-info form-control edit-button">Add Experience</button>
-        }
-           
         // let  educationTabs= null;
-        // if(this.props.experience._id){
-        //     educationTabs= <Education education={this.props.experience} editable={this.state.editable} />
+        // if(this.state.education.college){
+        //     educationTabs= <Education education={this.state.education} editable={this.state.editable} />
+        // }
+        // else if (this.state.editable){
+        //     educationTabs = <button onClick={this.AddEducationHandler} className="btn btn-info form-control edit-button">Add Education</button>
         // }
 
-        // let addEducationButton = null;
-        // if (this.state.editable) {
-        //     addEducationButton = <button onClick={this.AddEducationHandler} className="btn btn-info form-control edit-button">Add Education</button>
+        // let  experienceTabs= null;
+        // if(this.state.experience.company){
+        //     experienceTabs= <Experience Experience={this.state.experience} editable={this.state.editable} />
         // }
-        // let addExperienceButton = null;
-        // if (this.state.editable) {
-        //     addExperienceButton = <button onClick={this.AddExperienceHandler} className="btn btn-info form-control edit-button">Add Experience</button>
+        // else if (this.state.editable){
+        //     experienceTabs = <button onClick={this.AddExperienceHandler} className="btn btn-info form-control edit-button">Add Experience</button>
         // }
+           
+        let educationTabs = this.state.education.map(e => {
+            return(
+                <Education key={e._id} education= {e} editable={this.state.editable} />
+            )
+        })
+        let experienceTabs = this.state.experience.map(e => {
+            return(
+                <Experience key={e._id} Experience= {e} editable={this.state.editable}/>
+            )
+        })
+
+        let addEducationButton = null;
+        if(this.state.editable){
+            addEducationButton= <button onClick={this.AddEducationHandler} className="btn btn-info form-control edit-button">Add Education</button>
+        }
+        let addExperienceButton = null;
+        if(this.state.editable){
+            addExperienceButton= <button onClick={this.AddExperienceHandler} className="btn btn-info form-control edit-button">Add Experience</button>
+        }
         return (
             <div className="handshake-body">
                 <div className=" col-sm-8 col-sm-offset-2 profile-container card-columns">
@@ -143,12 +137,14 @@ class HomePage extends Component {
                             <div className="card-body">
                                 <h4 className="card-title">Education</h4>
                                 {educationTabs}
+                                {addEducationButton}
                             </div>
                         </div>
                         <div className="box-part">
                             <div className="card-body">
                                 <h4 className="card-title">Experience</h4>
                                 {experienceTabs}
+                                {addExperienceButton}
                             </div>
                         </div>
                     </div>
@@ -160,6 +156,7 @@ class HomePage extends Component {
 
 
 const mapStateToProps = state => {
+    console.log(state.studentProfileReducer);
     return {
         education: state.studentProfileReducer.education,
         experience: state.studentProfileReducer.experience
@@ -168,7 +165,9 @@ const mapStateToProps = state => {
 
 function mapDispatchToProps(dispatch) {
     return {
-        studentdata: (id) => dispatch(getStudentData(id))
+        studentdata: (id) => dispatch(getStudentData(id)),
+        addEducation : (data) => dispatch(addEducation(data)),
+        addExperience : (data) => dispatch(addExperience(data)),
     };
 }
 const Home = connect(mapStateToProps, mapDispatchToProps)(HomePage);

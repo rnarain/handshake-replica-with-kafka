@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { colleges, majors ,degreeTypes } from '../../../../enum';
 import axios from 'axios';
 import backendServer from '../../../../webConfig'
-import { changeEducation } from "../../../../js/actions/studentProfile.js";
+import { changeEducation , deleteEducation } from "../../../../js/actions/studentProfile.js";
 import { connect } from 'react-redux';
 
 
@@ -19,20 +19,18 @@ class EducationPage extends Component {
         //maintain the state required for this component
         this.state = {
             _id: "",
-            college: "",
+            college: 0,
             major: "",
             yearOfStarting: "",
             yearOfPassing: "",
             gpa: "",
-            degreeType: "",
+            degreeType: 0,
             add: false,
             edit: false
         }
     }
 
     componentDidMount() {
-        console.log(this.props);
-        if(this.props.education._id !=this.state._id){
             this.setState({
                 _id: this.props.education._id,
                 college: this.props.education.college,
@@ -44,7 +42,6 @@ class EducationPage extends Component {
                 add: this.props.education.add,
                 edit: this.props.education.edit
             })
-        }
     }
 
     editButtonChangeHandler = (e) => {
@@ -52,6 +49,12 @@ class EducationPage extends Component {
             edit: !this.state.edit,
             add: false
         })
+    }
+
+    deleteButtonChangeHandler = (e) => {
+        this.props.deleteEducation({
+            id: localStorage.getItem('id'),
+            educationId:this.state._id});
     }
 
     collegeChangeHandler = (e) => {
@@ -88,8 +91,16 @@ class EducationPage extends Component {
 
 
     cancelEdit = (e) => {
+        if(this.state.add){
+            this.props.deleteEducation({
+                id: localStorage.getItem('id'),
+                educationId:this.state._id
+            });
+        }
+
         this.setState({
             edit: false,
+            add:false,
         })
         // this.state =[]
     }
@@ -103,29 +114,12 @@ class EducationPage extends Component {
             yearOfPassing: this.state.yearOfPassing,
             gpa: this.state.gpa,
             degreeType: this.state.degreeType,
-            id: localStorage.getItem('id')
+            id: localStorage.getItem('id'),
+            educationId : this.state._id
         }
 
         this.props.changeEducation(data)
-        // console.log(data);
-        // axios.post(`${backendServer}/api/account/addUpdateStudentEducation`, data)
-        //     .then(response => {
-        //         console.log(response);
-        //         if (response.status == 200) {
-        //             //
-        //         }
-        //     }
-        //     ).catch(ex => {
-        //         alert(ex);
-        //     });
         this.setState({
-            // educationID: this.state.educationID,
-            // college: this.state.college,
-            // major: this.state.major,
-            // yearOfStarting: this.state.yearOfStarting,
-            // yearOfPassing: this.state.yearOfPassing,
-            // gpa: this.state.gpa,
-            // degreeType: this.state.degreeType,
             add: false,
             edit: false
         })
@@ -216,8 +210,11 @@ class EducationPage extends Component {
         }
         else {
             let editButton=null;
+            let deleteButton=null;
         if(this.props.editable) {
+            deleteButton = <button type="button" className="btn btn-danger btn-circle pull-right delete-button" onClick={this.deleteButtonChangeHandler}>< i className="glyphicon glyphicon-remove"></i></button>
             editButton = <button type="button" className="btn btn-default btn-circle pull-right" onClick={this.editButtonChangeHandler}>< i className="glyphicon glyphicon-pencil"></i></button>
+        
         }
             return (
                 <div className="row">
@@ -225,13 +222,14 @@ class EducationPage extends Component {
                         <p>
                             <img src="/images/university.png" className="logo" /></p>
                     </div>
-                    <div className="col-sm-9">
+                    <div className="col-sm-7">
                         <h4>{colleges[this.state.college]}</h4>
                         <p>{degreeTypes[this.state.degreeType]} , {majors[this.state.major]} </p>
                         <p>{dateTimeToDate(this.state.yearOfStarting)} - {dateTimeToDate(this.state.yearOfPassing)}</p>
                         <p> <b> GPA : </b>{this.state.gpa} / 4</p>
                     </div>
-                    <div className="col-sm-1">
+                    <div className="col-sm-4">
+                       {deleteButton}
                         {editButton}
                     </div>
                 </div>
@@ -241,13 +239,14 @@ class EducationPage extends Component {
 }
 const mapStateToProps = state => {
     return { 
-      education : state.studentProfileReducer.education,
+    //   education : state.studentProfileReducer.education,
      };
 };
 
 function mapDispatchToProps(dispatch) {
     return {
-        changeEducation: (data) => dispatch(changeEducation(data))
+        changeEducation: (data) => dispatch(changeEducation(data)),
+        deleteEducation:(data)=> dispatch(deleteEducation(data))
     };
 }
 const Education = connect(mapStateToProps, mapDispatchToProps)(EducationPage);

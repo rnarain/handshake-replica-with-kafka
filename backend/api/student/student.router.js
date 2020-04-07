@@ -12,8 +12,12 @@ const {
   getAllStudents,
   updateStudentProfilePic,
   updateStudentObjective,
-  addUpdateStudentEducation,
-  addUpdateStudentExperience,
+  addEducation,
+  updateEducation,
+  deleteEducation,
+  addExperience,
+  updateExperience,
+  deleteExperience,
   updateStudentSkills,
   updateContactInformation
 
@@ -34,8 +38,12 @@ let checkAuth = passport.authenticate('jwt', { session: false });
  router.post("/updateStudentSkills", checkAuth, updateStudentSkills);
   router.post("/updateContactInformation", checkAuth,updateContactInformation);
  router.post("/updateStudentObjective", checkAuth ,updateStudentObjective);
- router.post("/addUpdateStudentEducation", checkAuth ,addUpdateStudentEducation);
- router.post("/addUpdateStudentExperience", checkAuth ,addUpdateStudentExperience);
+ router.post("/addEducation", checkAuth ,addEducation);
+ router.post("/updateEducation", checkAuth ,updateEducation);
+ router.post("/deleteEducation", checkAuth ,deleteEducation); 
+ router.post("/addExperience", checkAuth ,addExperience);
+ router.post("/deleteExperience", checkAuth ,deleteExperience);
+ router.post("/updateExperience", checkAuth ,updateExperience);
  router.post("/updateStudentProfilePic/:id", checkAuth ,updateStudentProfilePic);
  
 

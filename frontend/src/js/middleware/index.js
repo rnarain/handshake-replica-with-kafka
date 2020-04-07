@@ -1,5 +1,5 @@
 import {GET_STUDENT_DATA, CHANGE_NAME ,CHANGE_OBJECTIVE ,CHANGE_CONTACT_INFORMATION ,CHANGE_EDUCATION,CHANGE_EXPERIENCE,
-  CHANGE_SKILLS  } from "../constants/action-types";
+  CHANGE_SKILLS , DELETE_EXPERIENCE , DELETE_EDUCATION } from "../constants/action-types";
 import axios from 'axios';
 import backendServer from '../../webConfig'
 
@@ -15,7 +15,7 @@ export  function handshakeMiddleWare({ dispatch }) {
         await axios.get(`${backendServer}/api/student/getStudentDetails/` +action.payload)
         .then(response => {
                     console.log(response);
-                    action.payload = response.data.data;  
+                    action.payload = response.data.data[0];  
                 } 
         ).catch( ex =>{
             console.log(ex);
@@ -65,26 +65,53 @@ export  function handshakeMiddleWare({ dispatch }) {
        else if (action.type === CHANGE_EDUCATION) {
         console.log(action.payload);
         axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-        await axios.post(`${backendServer}/api/student/addUpdateStudentEducation`, action.payload)
+        if(action.payload.educationId!==null){
+            console.log(action.payload.educationId)
+            await axios.post(`${backendServer}/api/student/updateEducation`, action.payload)
+            .then(response => {
+                console.log(response)
+                }
+            ).catch( ex =>{
+                console.log(ex);
+
+            });
+        }
+        else{
+            await axios.post(`${backendServer}/api/student/addEducation`, action.payload)
             .then(response => {
                  //update store
                 }
             ).catch( ex =>{
                 console.log(ex);
             });
-       }
+        }
+        }
+        
 
        else if (action.type === CHANGE_EXPERIENCE) {
         console.log(action.payload);
         axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-        await axios.post(`${backendServer}/api/student/addUpdateStudentExperience`, action.payload)
+        if(action.payload.experienceId!==null){
+            console.log(action.payload.experienceId)
+            await axios.post(`${backendServer}/api/student/updateExperience`, action.payload)
+            .then(response => {
+                console.log(response)
+                }
+            ).catch( ex =>{
+                console.log(ex);
+
+            });
+        }
+        else{
+            await axios.post(`${backendServer}/api/student/addExperience`, action.payload)
             .then(response => {
                  //update store
                 }
             ).catch( ex =>{
                 console.log(ex);
             });
-       }
+        }
+        }
        else if (action.type === CHANGE_SKILLS) {
         console.log(action.payload);
         axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
@@ -106,6 +133,34 @@ export  function handshakeMiddleWare({ dispatch }) {
             ).catch( ex =>{
                 console.log(ex);
             });
+       }
+
+       else if (action.type === DELETE_EDUCATION) {
+        console.log(action.payload);
+        if(action.payload.educationId!==null){
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+            await axios.post(`${backendServer}/api/student/deleteEducation`, action.payload)
+            .then(response => {
+                 //update store
+                }
+            ).catch( ex =>{
+                console.log(ex);
+            });
+        }
+       }
+
+       else if (action.type === DELETE_EXPERIENCE) {
+        console.log(action.payload);
+        if(action.payload.experienceId!==null){
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+            await axios.post(`${backendServer}/api/student/deleteExperience`, action.payload)
+            .then(response => {
+                 //update store
+                }
+            ).catch( ex =>{
+                console.log(ex);
+            });
+        }
        }
        
       return next(action);
