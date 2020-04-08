@@ -107,7 +107,7 @@ class IndividualMessage extends Component {
         if(chat.to === localStorage.getItem('id')){
             return (
                 <div className="incoming_msg">
-                <div className="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
+                <div className="incoming_msg_img"> <img src={chat.profile_img_url == null ? 'https://ptetutorials.com/images/user-profile.png' : chat.profile_img_url } alt="sunil" /> </div>
                 <div className="received_msg">
                   <div className="received_withd_msg">
                     <p>{chat.chat}</p>

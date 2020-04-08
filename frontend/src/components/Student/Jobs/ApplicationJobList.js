@@ -31,7 +31,7 @@ class ApplicationJobList extends Component {
     // } 
 
 
-    componentDidUpdate() {
+    componentDidMount() {
         // if (this.props.jobList.length > 0) {
 
         // if (Object.keys(this.state.selectedJob).length === 0) {

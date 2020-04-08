@@ -90,6 +90,41 @@ module.exports = {
     );
   },
 
+  createMessage: (data, callBack) => {
+    Message.findOne({ 
+      $or : [
+        { 
+          $and : [{'user1.id': data.user1.id}, {'user2.id': data.user2.id}]
+        },
+        { 
+          $and : [{'user1.id': data.user2.id}, {'user2.id': data.user1.id}]
+        }
+      ]
+    }, (error, message) => {
+      if (error) {
+        callBack(error);
+      }
+      if (message) {
+        return callBack(null);
+      }
+      else
+      {
+        var newMessage = new Message({
+          user1: data.user1,
+          user2: data.user2,
+          chats: []
+        });
+        newMessage.save((error, data) => {
+          if (error) {
+            callBack(error);
+          }
+          console.log(data);
+          return callBack(null, data);
+        })
+      }
+  })
+},
+
   // updateStudentSkills: (data, callBack) => {
   //   Student.update({ _id: data.id }, { skills: data.skills }, { upsert: false }, (error, results) => {
   //     if (error) {

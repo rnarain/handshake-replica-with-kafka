@@ -107,8 +107,6 @@ class Applications extends Component {
             filteredJobList: tempJobs
 
         })
-
-
         return tempJobs;
     }
 

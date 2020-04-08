@@ -3,7 +3,7 @@ import axios from 'axios';
 import {colleges ,majors,degreeTypes} from '../../../../enum'
 import backendServer from '../../../../webConfig'
 import {connect} from 'react-redux'
-import { changename } from "../../../../js/actions/studentProfile.js";
+import { changename  , changeProfilePic } from "../../../../js/actions/studentProfile.js";
 import {dateTimeToDate} from '../../../../helperMethods';
 
 
@@ -36,7 +36,7 @@ class BasicInfoPage extends Component {
     }
 
         componentDidUpdate() {
-            if(this.props.fname!=this.state.fname || this.props.profilePicURL!=this.state.profilePicURL ){
+            if( this.props.profilePicURL!=this.state.profilePicURL ){
                 console.log(this.props.education);
                 this.setState({
                     fname : this.props.fname,
@@ -80,7 +80,7 @@ class BasicInfoPage extends Component {
                 fname: this.state.fname,
                 lname: this.state.lname,
                 id:localStorage.getItem('id'),
-                edit: !this.state.edit
+               
             })
             // axios.post(`${backendServer}/api/account/updateStudentName`  , data)
             //     .then(response => {
@@ -92,9 +92,9 @@ class BasicInfoPage extends Component {
             //     ).catch(ex => {
             //         alert(ex);
             //     });
-            // this.setState({
-            //     edit: !this.state.edit
-            // })
+            this.setState({
+                edit: !this.state.edit
+            })
         }
 
         getProfilePic =(e) =>{
@@ -107,18 +107,20 @@ class BasicInfoPage extends Component {
         submitProfileEdit = (e) => {
             const data = new FormData()
             data.append('file', this.state.profileImg)
-            axios.post(`${backendServer}/api/account/updateStudentProfilePic/${localStorage.getItem('id')}` , data)
-                .then(response => {
-                    console.log(response);
-                    if (response.status == 200) {
-                        this.setState({
-                           profilePicURL : response.data.data
-                        })
-                    }
-                }
-                ).catch(ex => {
-                    alert(ex);
-                });
+            this.props.changeProfilePic(data);
+        //     axios.post(`${backendServer}/api/account/updateStudentProfilePic/${localStorage.getItem('id')}` , data)
+        //         .then(response => {
+        //             console.log(response);
+        //             if (response.status == 200) {
+        //                 this.setState({
+        //                    profilePicURL :  
+        //                 })
+        //             }
+        //         }
+        //         ).catch(ex => {
+        //             alert(ex);
+        //         });
+        // }
         }
     
     render() {
@@ -177,6 +179,8 @@ const mapStateToProps = state => {
 function mapDispatchToProps(dispatch) {
     return {
         changename: (data) => dispatch(changename(data)) ,
+        changeProfilePic: (data) => dispatch(changeProfilePic(data)) ,
+
     };
 }
 const BasicInfo = connect(mapStateToProps, mapDispatchToProps)(BasicInfoPage);

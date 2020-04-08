@@ -1,4 +1,4 @@
-import {GET_STUDENT_DATA, CHANGE_NAME ,CHANGE_OBJECTIVE ,CHANGE_CONTACT_INFORMATION ,CHANGE_EDUCATION,CHANGE_EXPERIENCE,
+import {GET_STUDENT_DATA, CHANGE_NAME , CHANGE_PROFILE_PIC, CHANGE_OBJECTIVE ,CHANGE_CONTACT_INFORMATION ,CHANGE_EDUCATION,CHANGE_EXPERIENCE,
 CHANGE_SKILLS , DELETE_EXPERIENCE , DELETE_EDUCATION ,ADD_EXPERIENCE ,ADD_EDUCATION } from "../constants/action-types";
 
 export function getStudentData(payload) {
@@ -10,6 +10,12 @@ export function changename(payload) {
   console.log("dispatching the change name action")
   return { type: CHANGE_NAME, payload };
 }
+
+export function changeProfilePic(payload) {
+  console.log("dispatching the changeProfilePic action")
+  return { type: CHANGE_PROFILE_PIC, payload };
+}
+
 
 export function changeObjective(payload) {
     console.log("dispatching the change objective action")

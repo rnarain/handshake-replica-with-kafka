@@ -205,8 +205,8 @@ module.exports = {
     return callBack(null, result);
   });
 },
-  getAllStudents: (callBack) => {
-    Student.find({},
+  getAllStudents: (id,callBack) => {
+    Student.find({_id: {$ne: id}},
       (error, results) => {
         if (error) {
           callBack(error);

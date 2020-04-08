@@ -1,4 +1,4 @@
-import {GET_STUDENT_DATA, CHANGE_NAME ,CHANGE_OBJECTIVE ,CHANGE_CONTACT_INFORMATION ,CHANGE_EDUCATION,CHANGE_EXPERIENCE,
+import {GET_STUDENT_DATA, CHANGE_NAME , CHANGE_PROFILE_PIC,CHANGE_OBJECTIVE ,CHANGE_CONTACT_INFORMATION ,CHANGE_EDUCATION,CHANGE_EXPERIENCE,
   CHANGE_SKILLS , DELETE_EXPERIENCE , DELETE_EDUCATION } from "../constants/action-types";
 import axios from 'axios';
 import backendServer from '../../webConfig'
@@ -32,6 +32,18 @@ export  function handshakeMiddleWare({ dispatch }) {
                       lname : action.payload.lname
                     }
                       action.payload = data;  
+                }
+            ).catch( ex =>{
+                console.log(ex);
+            });
+       }
+
+       else if (action.type === CHANGE_PROFILE_PIC) {
+        console.log(action.payload);
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+        await axios.post(`${backendServer}/api/student/updateStudentProfilePic/${localStorage.getItem('id')}` ,action.payload)
+            .then(response => {
+                    action.payload = response.data.data;  
                 }
             ).catch( ex =>{
                 console.log(ex);

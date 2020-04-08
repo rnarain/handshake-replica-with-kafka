@@ -19,6 +19,7 @@ class Login extends Component {
         this.state = {
             email: "",
             password: "",
+            type:'student',
             authFlag: false
         }
         //Bind the handlers to this className
@@ -44,6 +45,12 @@ class Login extends Component {
             password: e.target.value
         })
     }
+    userTypeChangeHandler = (e) => {
+        this.setState({
+            type: e.target.value
+        })
+    }
+    
     //submit Login handler to send a request to the node backend
     submitLogin = (e) => {
         var headers = new Headers();
@@ -56,13 +63,13 @@ class Login extends Component {
         //set the with credentials to true
         axios.defaults.withCredentials = true;
         //make a post request with the user data
-        axios.post(`${backendServer}/api/student/login`, data)
+        axios.post(`${backendServer}/api/${this.state.type}/login`, data)
             .then(response => {
                 console.log(response);
                 var decoded = jwt_decode(response.data.data);
                 localStorage.setItem("token", "Bearer " + response.data.data);
                 localStorage.setItem("id", decoded._id);
-                localStorage.setItem("type", decoded.type);
+                // localStorage.setItem("type", this.state.type);
                     this.setState({
                         authFlag: true
                     })
@@ -77,14 +84,22 @@ class Login extends Component {
     render() {
         //redirect based on successful login
         let redirectVar = null;
-        if (localStorage.getItem('type') == 0 && this.state.authFlag) {
+        if (this.state.type =='student' && this.state.authFlag) {
+            localStorage.setItem("type", 0);
             let redVar = "/student/profile/"+ localStorage.getItem('id');
             redirectVar = <Redirect to={redVar} />
         }
-        else if(this.state.authFlag){
+        else if(this.state.type =='company' && this.state.authFlag){
+            localStorage.setItem("type", 1);
             redirectVar = <Redirect to="/company/postings" />
         }
-
+        let userType =
+        (
+            <select onChange={this.userTypeChangeHandler} value={this.state.userType} className="form-control">
+                <option  value="student" > Student </option>
+                <option  value="company"> Employer </option>
+            </select>
+        );
         return (
             <div>
                 {redirectVar}
@@ -122,6 +137,9 @@ class Login extends Component {
                                     <div className="form-group">
                                         <input onChange={this.passwordChangeHandler} type="password" className="form-control" name="password" placeholder="Password" />
                                     </div>
+                                    <div className="form-group">
+                                    {userType}
+                                       </div>
                                     <button onClick={this.submitLogin} className="btn btn-primary">Login</button>
                                 </form>
 

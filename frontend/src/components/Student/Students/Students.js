@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
-// import BasicInfo from '../ProfileTabs/AllTabs/BasicInfo';
-// import AccountInfo from '../ProfileTabs/AllTabs/AccountInfo';
-// import CareerObjective from '../ProfileTabs/AllTabs/CareerObjective';
-// import Education from '../ProfileTabs/AllTabs/Education';
-// import Experience from '../ProfileTabs/AllTabs/Experience';
-// import Skills from '../ProfileTabs/AllTabs/Skills';
 import axios from 'axios';
-import {colleges ,majors, skills} from '../../../enum'
+import {colleges ,majors, degreeTypes,skills} from '../../../enum'
 import cookie from 'react-cookies';
 import backendServer from '../../../webConfig'
 import { paginate, pages } from '../../../helperFunctions/paginate'
+import {dateTimeToDate} from '../../../helperMethods';
+import { Redirect } from 'react-router';
+
+
 
 
 
@@ -26,7 +24,8 @@ class Students extends Component {
             filteredStudents: [],
             collegeFilterArray:[],
             skillsFilterArray:[],
-            pages: 0
+            pages: 0,
+            chatting:false
 
         }
 
@@ -40,7 +39,7 @@ class Students extends Component {
         axios.defaults.withCredentials = true;
         //make a post request with the user data
         axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-        await axios.get(`${backendServer}/api/student/getAllStudents`)
+        await axios.get(`${backendServer}/api/student/getAllStudents/${localStorage.getItem('id')}`)
             .then(response => {
                 console.log(response);
                 this.setState({
@@ -57,7 +56,7 @@ class Students extends Component {
 
     paginatinon = (e) => {
         this.setState({
-            filteredRegistrations: paginate(this.state.students,e, 10)
+            filteredStudents: paginate(this.state.students,e, 10)
         })
     }
 
@@ -98,6 +97,8 @@ class Students extends Component {
 
     updateStudentsForCollege=()=>{
         console.log(this.state.collegeFilterArray)
+        console.log(this.state.filteredStudents)
+
         if(this.state.collegeFilterArray.length === 0){
             this.setState({
                 filteredStudents: this.state.students
@@ -107,7 +108,8 @@ class Students extends Component {
             let filteredstudents = this.state.students;
             this.setState({
                 filteredStudents: filteredstudents.filter((s) => {
-                    return (this.state.collegeFilterArray.includes(s.college))
+                    console.log(s.education[0].college)
+                    return (this.state.collegeFilterArray.includes(s.education[0].college))
                 }
                 )
             })
@@ -156,11 +158,36 @@ class Students extends Component {
         
     }
 
+    startChat = (id , name , profilePicURL) =>{
+        const data= {
+            user1 : {
+                id : localStorage.getItem('id'),
+                name : "narain",
+                profile_img_url : null
+            },
+            user2 : {
+                id : id,
+                name : name,
+                profile_img_url : profilePicURL
+            },
+        }
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+        axios.post(`${backendServer}/api/message/createMessage`, data)
+            .then(response => {
+                this.setState({
+                    chatting:true
+                })
+
+            }
+            ).catch(ex => {
+                alert(ex);
+            });
+    }
     render() {
         let students = this.state.filteredStudents.map(student => {
             let worksAt = null;
             if(student.title !== null){
-                worksAt =<p><i className="glyphicon glyphicon-briefcase"></i>{student.title} at {student.company}</p>
+                worksAt =<p><i className="glyphicon glyphicon-briefcase"></i> {student.experience[0].title} at {student.experience[0].company}</p>
               }
               else{
                 worksAt =<p><i className="glyphicon glyphicon-briefcase"></i> No work experience listed</p>
@@ -172,22 +199,26 @@ class Students extends Component {
                         <div className="col-sm-2">
                             <img className=" img-fluid img-circle profile-img" src={student.profilePicURL} alt="No profile image available" />
                         </div>
-                        <div className="col-sm-10">
+                        <div className="col-sm-8">
                             <div className="row">
-                            <a href=""><h4 className="card-title">{student.fname} {student.lname}</h4></a>
-                            <h5 className="card-text">{colleges[student.college]}</h5>
+                            <div className="col-sm-6 nopadding"><a href=""><h4 className="card-title">{student.fname} {student.lname}</h4></a>
+                            <h5 className="card-text">{colleges[student.education[0].college]}</h5>
+                            </div>
                             </div>
                             <div className="row">
                             <div className="col-sm-6 nopadding">
-                            <p className="card-text">{student.degreeType} ,Graduates {student.yearOfPassing} </p>
+                            <p className="card-text">{degreeTypes[student.education[0].degreeType]} ,Graduates {dateTimeToDate(student.education[0].yearOfPassing)} </p>
                             {worksAt}
                         </div>
 
                         <div className="col-sm-6 nopadding">
-                            <p >{majors[student.major]} </p>
-                            <p > GPA : {student.gpa} / 4 </p>
+                            <p >{majors[student.education[0].major]} </p>
+                            <p > GPA : {student.education[0].gpa} / 4 </p>
                         </div>
                         </div>
+                        </div>
+                        <div className="col-sm-2">
+                            <button className="btn btn-outline-colored" onClick={()=>{this.startChat(student._id , student.fname , student.profilePicURL)}}><i className="glyphicon glyphicon-envelope"></i> Chat</button>
                         </div>
                     </div>
                 </div>
@@ -224,8 +255,13 @@ class Students extends Component {
             }
         }
 
+        let redirectVar= null;
+        if(this.state.chatting){
+            redirectVar = <Redirect to="/student/messages" />
+        }
         return (
             <div className="handshake-body">
+                {redirectVar}
                 <div className=" col-sm-10 col-sm-offset-1 profile-container card-columns">
                     <div className="card col-sm-3">
                         <div className="box-part-nopadding">

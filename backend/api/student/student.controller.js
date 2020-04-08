@@ -295,7 +295,8 @@ module.exports = {
   },
 
   getAllStudents: (req, res) => {
-    getAllStudents((err, results) => {
+    const id = req.params.id;
+    getAllStudents(id,(err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -356,7 +357,7 @@ module.exports = {
         }
         return res.status(200).json({
           success: 1,
-          data: results
+          data: data.profilePicURL
         });
       });
     });

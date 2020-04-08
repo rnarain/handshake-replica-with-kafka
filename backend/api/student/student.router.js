@@ -32,7 +32,7 @@ let checkAuth = passport.authenticate('jwt', { session: false });
 // router.get("/", checkToken, getUsers);
  router.post("/createStudent", createStudent);
  router.get("/getStudentDetails/:id", getStudentDetails);
- router.get("/getAllStudents", checkAuth,getAllStudents);
+ router.get("/getAllStudents/:id", checkAuth,getAllStudents);
 
  router.post("/updateStudentName", checkAuth, updateStudentName);
  router.post("/updateStudentSkills", checkAuth, updateStudentSkills);

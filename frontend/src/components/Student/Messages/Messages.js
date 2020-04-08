@@ -73,10 +73,10 @@ class Messages extends Component {
           //active_chat
           <div className="chat_list "  key={message._id} onClick={()=>this.showMessageDetail(message)}>
                 <div className="chat_people">
-                  <div className="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" /> </div>
+                  <div className="chat_img"> <img src={  chattingWith.profile_img_url == null ? 'https://ptetutorials.com/images/user-profile.png' : chattingWith.profile_img_url} className="img-circle"/> </div>
                   <div className="chat_ib">
-                    <h5>{chattingWith.name} <span className="chat_date">{dateTimeToDate(message.chats[message.chats.length - 1].time)}</span></h5>
-                    <p>{message.chats[message.chats.length - 1].chat}</p>
+                    <h5>{chattingWith.name} <span className="chat_date">{message.chats.length > 0 ? dateTimeToDate(message.chats[message.chats.length - 1].time) :""}</span></h5>
+                    <p>{message.chats.length > 0 ? message.chats[message.chats.length - 1].chat : ""}</p>
                   </div>
                 </div>
               </div>

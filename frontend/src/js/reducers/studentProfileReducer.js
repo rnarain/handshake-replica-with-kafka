@@ -1,4 +1,4 @@
-import {GET_STUDENT_DATA, CHANGE_NAME ,CHANGE_OBJECTIVE ,CHANGE_CONTACT_INFORMATION ,CHANGE_EDUCATION,CHANGE_EXPERIENCE,
+import {GET_STUDENT_DATA, CHANGE_NAME ,CHANGE_PROFILE_PIC,CHANGE_OBJECTIVE ,CHANGE_CONTACT_INFORMATION ,CHANGE_EDUCATION,CHANGE_EXPERIENCE,
   CHANGE_SKILLS , ADD_EDUCATION , ADD_EXPERIENCE   , DELETE_EDUCATION ,DELETE_EXPERIENCE} from "../constants/action-types";
 const initialState = {
     fname : null,
@@ -25,6 +25,13 @@ function studentProfileReducer(state = initialState, action) {
           lname: action.payload.lname
       });
     }
+
+    else if(action.type === CHANGE_PROFILE_PIC){
+      console.log(action.payload);
+      return Object.assign({}, state, {
+          profilePicURL: action.payload
+      });
+    }
     else if(action.type === CHANGE_OBJECTIVE){
       console.log(action.payload);
       return Object.assign({}, state, {
@@ -42,16 +49,6 @@ function studentProfileReducer(state = initialState, action) {
       console.log(action.payload);
       var foundIndex = state.education.findIndex(x => x._id === action.payload._id);
       state.education[foundIndex] = action.payload;
-      // return Object.assign({}, state, {
-      //     education:{
-      //       college : action.payload.college,
-      //       yearOfPassing : action.payload.yearOfPassing,
-      //       major : action.payload.major,
-      //       yearOfStarting : action.payload.yearOfStarting,
-      //       gpa : action.payload.gpa,
-      //       degreeType : action.payload.degreeType
-      //     } 
-      // });
     }
     else if(action.type === CHANGE_EXPERIENCE){
       console.log(action.payload);
