@@ -17,7 +17,7 @@ let checkAuth = passport.authenticate('jwt', { session: false });
 // router.get("/", checkToken, getUsers);
 //  router.post("/createStudent", createStudent);
 //  router.get("/getStudentDetails/:id", getStudentDetails);
-  router.get("/getAllStudents",getAllStudents);
+  router.get("/getAllStudents",checkAuth , getAllStudents);
 
 //  router.post("/updateStudentName", checkAuth, updateStudentName);
 //  router.post("/updateStudentSkills", checkAuth, updateStudentSkills);
@@ -34,9 +34,9 @@ let checkAuth = passport.authenticate('jwt', { session: false });
 
 
  router.post("/login", login);
- router.get("/getCompanyProfileDetails/:id", getCompanyProfileDetails);
- router.post("/updateCompanyDetails", updateCompanyDetails);
- router.post("/updateCompanyProfilePic/:id" ,updateCompanyProfilePic);
+ router.get("/getCompanyProfileDetails/:id", checkAuth,  getCompanyProfileDetails);
+ router.post("/updateCompanyDetails", checkAuth, updateCompanyDetails);
+ router.post("/updateCompanyProfilePic/:id" ,checkAuth ,updateCompanyProfilePic);
 
 
 

@@ -25,6 +25,7 @@ class ApplicantList extends Component {
     componentDidMount() {
         axios.defaults.withCredentials = true;
         // make a post request with the user data
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
         axios.get(`${backendServer}/api/job/getApplicantListByJobID/${this.props.match.params.id}`)
             .then(response => {
                 if (response.status === 200) {

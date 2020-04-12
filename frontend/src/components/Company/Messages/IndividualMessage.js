@@ -61,7 +61,7 @@ class IndividualMessage extends Component {
             id : this.state.messageId
         }
         
-        
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
         axios.post(`${backendServer}/api/message/addMessage`, data)
             .then(response => {
                 console.log(response);

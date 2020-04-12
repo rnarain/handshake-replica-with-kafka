@@ -44,7 +44,7 @@ class Students extends Component {
                 console.log(response);
                 this.setState({
                     students: response.data.data,
-                    filteredStudents : response.data.data,
+                    filteredStudents :  paginate(response.data.data,1,10),
                     pages: pages(response.data.data, 10)
 
                 })
@@ -162,8 +162,8 @@ class Students extends Component {
         const data= {
             user1 : {
                 id : localStorage.getItem('id'),
-                name : "narain",
-                profile_img_url : null
+                name : localStorage.getItem('name'),
+                profile_img_url : localStorage.getItem('profilePicURL')
             },
             user2 : {
                 id : id,

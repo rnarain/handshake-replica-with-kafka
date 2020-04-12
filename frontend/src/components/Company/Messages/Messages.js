@@ -36,6 +36,7 @@ class Messages extends Component {
 
         axios.defaults.withCredentials = true;
         //make a post request with the user data
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
         await axios.get(`${backendServer}/api/message/getMessages/${localStorage.getItem('id')}`)
             .then(response => {
                 console.log(response);

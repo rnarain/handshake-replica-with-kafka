@@ -69,6 +69,9 @@ class Login extends Component {
                 var decoded = jwt_decode(response.data.data);
                 localStorage.setItem("token", "Bearer " + response.data.data);
                 localStorage.setItem("id", decoded._id);
+                localStorage.setItem("name", decoded.name);
+                localStorage.setItem("profilePicURL", decoded.profilePicURL);
+
                 // localStorage.setItem("type", this.state.type);
                     this.setState({
                         authFlag: true

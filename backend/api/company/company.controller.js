@@ -60,7 +60,7 @@ module.exports = {
           });
         }
         if (compareSync(body.password, results.password)) {
-          const payload = { _id: results._id, type: 0 };
+          const payload = { _id: results._id, type: 1 , name:results.name , profilePicURL : results.profilePicURL };
           const token = jwt.sign(payload, secret, {
             expiresIn: 1008000
           });

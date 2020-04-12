@@ -78,7 +78,7 @@ class EventPostings extends Component {
         e.preventDefault();
         const data = {
             companyID :localStorage.getItem('id'),
-            companyName : "Google",
+            companyName :localStorage.getItem('name'),
             description:this.state.description,
             name:this.state.name,
             time:this.state.time,
@@ -90,6 +90,8 @@ class EventPostings extends Component {
         console.log(data);
         // set the with credentials to true
         axios.defaults.withCredentials = true;
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+
         // make a post request with the user data
         axios.post(`${backendServer}/api/Event/createEvent`, data)
             .then(response => {

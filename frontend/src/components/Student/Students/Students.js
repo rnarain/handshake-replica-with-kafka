@@ -162,8 +162,8 @@ class Students extends Component {
         const data= {
             user1 : {
                 id : localStorage.getItem('id'),
-                name : "narain",
-                profile_img_url : null
+                name : localStorage.getItem('name'),
+                profile_img_url : localStorage.getItem('profilePicURL')
             },
             user2 : {
                 id : id,

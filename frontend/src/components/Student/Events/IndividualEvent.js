@@ -23,7 +23,7 @@ class IndividualEvent extends Component {
         const data={
             eventID:e,
             studentID: localStorage.getItem('id'),
-            name:"narain",
+            name:localStorage.getItem('name'),
         }
         axios.post(`${backendServer}/api/event/registerForEvent`,data)
             .then(response => {

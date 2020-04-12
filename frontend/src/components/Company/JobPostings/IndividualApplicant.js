@@ -30,6 +30,7 @@ class IndividualApplicant extends Component {
        console.log(data);
         //change application status
         axios.defaults.withCredentials = true;
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
         // make a post request with the user data
         axios.post(`${backendServer}/api/job/changeApplicationStatus`,data)
             .then(response => {

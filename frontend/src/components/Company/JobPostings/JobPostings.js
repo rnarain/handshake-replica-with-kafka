@@ -80,7 +80,7 @@ class JobPostings extends Component {
         e.preventDefault();
         const data = {
             companyID :localStorage.getItem('id'),
-            companyName:"Google",
+            companyName:localStorage.getItem('name'),
             description:this.state.description,
             title:this.state.title,
             salary:this.state.salary,
@@ -92,6 +92,7 @@ class JobPostings extends Component {
         // set the with credentials to true
         axios.defaults.withCredentials = true;
         // make a post request with the user data
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
         axios.post(`${backendServer}/api/job/createJob`, data)
             .then(response => {
                 if (response.status === 201) {

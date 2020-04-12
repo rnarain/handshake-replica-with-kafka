@@ -19,15 +19,15 @@ const {
 const passport = require('passport');
 let checkAuth = passport.authenticate('jwt', { session: false });
 
- router.post("/createJob", createJob);
- router.get("/getJobsByStudentID/:id",getJobsByStudentID);
- router.get("/getJobsByCompanyID/:id",getJobsByCompanyID);
- router.post("/applyForJob",applyForJob);
- router.get("/getApplicantListByJobID/:id",getApplicantListByJobID);
- router.get("/getAppliedJobsByStudentID/:id",getAppliedJobsByStudentID);
+ router.post("/createJob", checkAuth ,createJob);
+ router.get("/getJobsByStudentID/:id",checkAuth ,getJobsByStudentID);
+ router.get("/getJobsByCompanyID/:id",checkAuth,getJobsByCompanyID);
+ router.post("/applyForJob",checkAuth,applyForJob);
+ router.get("/getApplicantListByJobID/:id",checkAuth,getApplicantListByJobID);
+ router.get("/getAppliedJobsByStudentID/:id",checkAuth,getAppliedJobsByStudentID);
 
 //  router.delete("/deleteJob/:id",deleteJob);
- router.post("/changeApplicationStatus",changeApplicationStatus);
+ router.post("/changeApplicationStatus",checkAuth,changeApplicationStatus);
 
 
 
