@@ -1,10 +1,10 @@
 const {
   login,
-  // updateCompanyProfilePic,
-  // updateCompanyDetails,
+  updateCompanyProfilePic,
+  updateCompanyDetails,
   // updateContactInformation,
-  // getAllStudents,
-  // getCompanyProfileDetails
+   getAllStudents,
+  getCompanyProfileDetails
 } = require("./company.service");
 
 const jwt = require('jsonwebtoken');
@@ -81,6 +81,57 @@ module.exports = {
     });
   },
 
+  getCompanyProfileDetails: (req, res) => {
+    const id = req.params.id;
+
+    getCompanyProfileDetails(id, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
+      }
+      return res.status(200).json({
+        success: 1,
+        data: results
+      });
+    });
+  },
+
+  updateCompanyDetails: (req, res) => {
+    const body = req.body;
+    updateCompanyDetails(body, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
+      }
+      return res.status(200).json({
+        success: 1,
+        data: results
+      });
+    })
+  },
+
+
+  getAllStudents: (req, res) => {
+    getAllStudents((err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
+      }
+      return res.status(200).json({
+        success: 1,
+        data: results
+      });
+    });
+  },
 
   // getStudentDetails: (req, res) => {
   //   const id = req.params.id;
@@ -284,32 +335,34 @@ module.exports = {
   //   });
   // },
 
-  // updateCompanyProfilePic: (req, res) => {
-  //   upload(req, res, function (err) {
-  //     if (err) {
-  //       return res.status(500).json(err);
-  //     }
-  //     console.log(req.file.mimetype)
-  //     const data = {
-  //       profilePicURL: "/Uploads/Profile-Pic/" + req.file.originalname,
-  //       id: req.params.id
-  //     }
-  //     updateCompanyProfilePic(data, (err, results) => {
-  //       if (err) {
-  //         console.log(err);
-  //         return res.status(500).json({
-  //           success: 0,
-  //           message: "Database connection errror"
-  //         });
-  //       }
-  //       return res.status(200).json({
-  //         success: 1,
-  //         data: results
-  //       });
-  //     });
-  //   });
-  // },
+  updateCompanyProfilePic: (req, res) => {
+    upload(req, res, function (err) {
+      if (err) {
+        return res.status(500).json(err);
+      }
+      console.log(req.file.mimetype)
+      const data = {
+        profilePicURL: "/Uploads/Profile-Pic/" + req.file.originalname,
+        id: req.params.id
+      }
+      updateCompanyProfilePic(data, (err, results) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({
+            success: 0,
+            message: "Database connection errror"
+          });
+        }
+        return res.status(200).json({
+          success: 1,
+          data: data.profilePicURL
+        });
+      });
+    });
+  },
 
+
+  
   // updateStudentProfilePic: (req, res) => {
   //   upload(req, res, function (err) {
   //     if (err) {

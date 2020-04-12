@@ -5,6 +5,8 @@ import axios from 'axios';
 import PostingsNavbar from './PostingsNavbar';
 import IndividualApplicant from './IndividualApplicant';
 import backendServer from '../../../webConfig'
+import { paginate, pages } from '../../../helperFunctions/paginate'
+
 
 
 
@@ -27,21 +29,38 @@ class ApplicantList extends Component {
             .then(response => {
                 if (response.status === 200) {
                       this.setState({
-                        applicantList: response.data.data      
+                        applicantList: response.data.data,
+                        pages: pages(response.data.data, 10)
                       })
-                    console.log(response);
+                    console.log(response.data.data);
                 } else {
                     console.log("error");
                 }
             });
     }
 
+    paginatinon = (e) => {
+        this.setState({
+            filteredStudents: paginate(this.state.students,e, 10)
+        })
+    }
+
     render() {
         let applicants = this.state.applicantList.map(applicant => {
             return (
-               <IndividualApplicant individualApplicant={applicant} />
+               <IndividualApplicant individualApplicant={applicant} jobID= {this.props.match.params.id}/>
             )
         })
+
+        let links = [];
+        if (this.state.pages > 0) {
+            for (let i = 1; i <= this.state.pages; i++) {
+                links.push(<li className="page-item" key={i}><a className="page-link" onClick={() => { this.paginatinon(i) }}>
+                    {i}
+                </a></li>
+                )
+            }
+        }
 
         return (
             <div className="handshake-body">
@@ -61,6 +80,9 @@ class ApplicantList extends Component {
   </thead>
   <tbody>
    {applicants}
+   <ul className="pagination">
+   {links}
+   </ul>
   </tbody>
 </table>
 

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import EventPostingsNavbar from './EventPostingsNavbar';
-import backendServer from '../../../webConfig'
+import backendServer from '../../../webConfig';
+import { paginate, pages } from '../../../helperFunctions/paginate'
+
 
 
 
@@ -25,7 +27,9 @@ class participantList extends Component {
             .then(response => {
                 if (response.status === 200) {
                       this.setState({
-                        participantList: response.data.data      
+                        participantList: response.data.data,
+                        pages: pages(response.data.data, 10)
+
                       })
                     console.log(response);
                 } else {
@@ -40,11 +44,21 @@ class participantList extends Component {
             return (
                 <tr>
                 {/* <th scope="row"></th> */}
-                <td>{participant.fname} {participant.lname}</td>
+                <td>{participant.studentName}</td>
                 <td><Link to={profileLink} className="btn btn-primary">View</Link></td>
               </tr>
             )
         })
+
+        let links = [];
+        if (this.state.pages > 0) {
+            for (let i = 1; i <= this.state.pages; i++) {
+                links.push(<li className="page-item" key={i}><a className="page-link" onClick={() => { this.paginatinon(i) }}>
+                    {i}
+                </a></li>
+                )
+            }
+        }
 
         return (
             <div className="handshake-body">
@@ -59,6 +73,9 @@ class participantList extends Component {
   </thead>
   <tbody>
    {participants}
+   <ul className="pagination">
+   {links}
+   </ul>
   </tbody>
 </table>
 

@@ -78,6 +78,7 @@ class EventPostings extends Component {
         e.preventDefault();
         const data = {
             companyID :localStorage.getItem('id'),
+            companyName : "Google",
             description:this.state.description,
             name:this.state.name,
             time:this.state.time,

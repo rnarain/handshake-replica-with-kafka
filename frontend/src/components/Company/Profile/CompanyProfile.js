@@ -30,7 +30,7 @@ class CompanyProfile extends Component {
     async componentWillMount() {
         axios.defaults.withCredentials = true;
         //make a post request with the user data
-        await axios.get(`${backendServer}/api/account/getCompanyProfileDetails/${this.props.match.params.id}`)
+        await axios.get(`${backendServer}/api/company/getCompanyProfileDetails/${this.props.match.params.id}`)
             .then(response => {
                 console.log(response);
                 let companyProfile = response.data.data[0];
@@ -42,7 +42,6 @@ class CompanyProfile extends Component {
                     profilePicURL: companyProfile.profilePicURL,
                     email: companyProfile.email,
                     phone: companyProfile.phone,
-                    accountID:companyProfile.accountID
                 })
                 //console.log(this.state.studentProfileData)
 
@@ -119,10 +118,9 @@ class CompanyProfile extends Component {
             city: this.state.city,
             email: this.state.email,
             phone: this.state.phone,
-            accountID:this.state.accountID,
-            companyID:localStorage.getItem('id'),
+            id:localStorage.getItem('id'),
         }
-        axios.post(`${backendServer}/api/account/updateCompanyDetails`, data)
+        axios.post(`${backendServer}/api/company/updateCompanyDetails`, data)
             .then(response => {
                 console.log(response);
                 if (response.status == 200) {
@@ -152,7 +150,7 @@ class CompanyProfile extends Component {
     submitProfileEdit = (e) => {
         const data = new FormData()
         data.append('file', this.state.profileImg)
-        axios.post(`${backendServer}/api/account/updateCompanyProfilePic/${localStorage.getItem('id')}` , data)
+        axios.post(`${backendServer}/api/company/updateCompanyProfilePic/${localStorage.getItem('id')}` , data)
             .then(response => {
                 console.log(response);
                 if (response.status == 200) {

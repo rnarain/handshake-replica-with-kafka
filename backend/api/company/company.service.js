@@ -1,4 +1,6 @@
 const Company = require("../../Models/CompanyModel");
+const Student = require("../../Models/StudentModel");
+
 
 module.exports = {
   createCompany: (data, callBack) => {
@@ -45,6 +47,54 @@ module.exports = {
     );
   },
 
+  getCompanyProfileDetails :(id,callBack)=>{
+    Company.find({ _id: id }, (error, result) => {
+      if (error) {
+        callBack(error);
+      }
+      console.log(result);
+      return callBack(null, result);
+    });
+  },
+
+  updateCompanyDetails :(data, callBack) => {
+    var newData = {
+      name: data.name,
+      description: data.description,
+      city : data.city,
+      email: data.email,
+      phone : data.phone
+    }
+
+    Company.update({ _id: data.id }, newData, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
+      }
+      return callBack(null, results);
+    }
+    );
+  },
+
+  updateCompanyProfilePic: (data, callBack) => {
+    Company.update({ _id: data.id }, { profilePicURL: data.profilePicURL }, { upsert: false }, (error, results) => {
+      if (error) {
+        callBack(error);
+      }
+      return callBack(null, results);
+    }
+    );
+  },
+
+  getAllStudents: (callBack) => {
+    Student.find({},
+      (error, results) => {
+        if (error) {
+          callBack(error);
+        }
+        return callBack(null, results);
+      }
+    );
+  },
 //   getStudentProfileDetails: (id, callBack) => {
 //     Student.find({ _id: id }, (error, result) => {
 //       if (error) {

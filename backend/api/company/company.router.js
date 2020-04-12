@@ -6,18 +6,18 @@ const passport = require('passport');
 // const { checkToken } = require("../../auth/token_validation");
 const {
   login,
-  // updateCompanyProfilePic,
-  // updateCompanyDetails,
+   updateCompanyProfilePic,
+   updateCompanyDetails,
   // updateContactInformation,
-  // getAllStudents,
-  // getCompanyProfileDetails
+   getAllStudents,
+   getCompanyProfileDetails
 } = require("./company.controller");
 
 let checkAuth = passport.authenticate('jwt', { session: false });
 // router.get("/", checkToken, getUsers);
 //  router.post("/createStudent", createStudent);
 //  router.get("/getStudentDetails/:id", getStudentDetails);
-//  router.get("/getAllStudents/:id", checkAuth,getAllStudents);
+  router.get("/getAllStudents",getAllStudents);
 
 //  router.post("/updateStudentName", checkAuth, updateStudentName);
 //  router.post("/updateStudentSkills", checkAuth, updateStudentSkills);
@@ -34,6 +34,11 @@ let checkAuth = passport.authenticate('jwt', { session: false });
 
 
  router.post("/login", login);
+ router.get("/getCompanyProfileDetails/:id", getCompanyProfileDetails);
+ router.post("/updateCompanyDetails", updateCompanyDetails);
+ router.post("/updateCompanyProfilePic/:id" ,updateCompanyProfilePic);
+
+
 
 // router.get("/:id", checkToken, getUserByUserId);
 // router.post("/login", login);

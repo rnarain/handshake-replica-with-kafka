@@ -70,10 +70,6 @@ module.exports = {
 
   getJobsByCompanyID: (req, res) => {
     const id = req.params.id;
-    // return res.json({
-    //   success: 0,
-    //   data: "ID cannot be null"
-    // });
 
     getJobsByCompanyID(id, (err, results) => {
       if (err) {

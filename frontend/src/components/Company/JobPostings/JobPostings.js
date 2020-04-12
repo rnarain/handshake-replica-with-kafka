@@ -80,6 +80,7 @@ class JobPostings extends Component {
         e.preventDefault();
         const data = {
             companyID :localStorage.getItem('id'),
+            companyName:"Google",
             description:this.state.description,
             title:this.state.title,
             salary:this.state.salary,

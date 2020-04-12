@@ -4,26 +4,26 @@ const Event = require("../../Models/EventModel");
 
 module.exports = {
   createEvent: (data, callBack) => {
-    pool.query(
-      `insert into event(companyID,date,time,name,description,location,majorsEligible	) 
-                values(?,?,?,?,?,?,?)`,
-      [
-        data.companyID,
-        data.date,
-        data.time,
-        data.name,
-        data.description,
-        data.location,
-        data.majorsEligible,
-      ],
-      (error, results, fields) => {
-        console.log(results);
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+
+    var newEvent = new Event({
+      date :data.date ,
+      time : data.time,
+      name : data.name,
+      description : data.description,
+      companyID : data.companyID,
+      companyName : data.companyName,
+      majorsEligible : data.majorsEligible,
+      location : data.location,
+      participants : []
+    });
+
+    newEvent.save((error, data) => {
+      if (error) {
+        callBack(error);
       }
-    );
+      console.log(data);
+      return callBack(null, data);
+    })
   },
 
   registerForEvent: (data, callBack) => {
@@ -60,20 +60,13 @@ module.exports = {
   },
 
    getEventsByCompanyID: (id,callBack) => {
-    pool.query(
-      `select * 
-      from event where companyID = ?
-`,
-      [
-       id
-      ],
-      (error, results, fields) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
+    Event.find({ companyID : id }, (error, result) => {
+      if (error) {
+        callBack(error);
       }
-    );
+      console.log(result);
+      return callBack(null, result);
+    });
   },
 
 //   deleteJob: (id, callBack) => {
@@ -90,19 +83,13 @@ module.exports = {
 //   },
 
 getParticpantListByEventID: (id,callBack) => {
-    pool.query(
-      `select EP.eventParticipantID,EP.studentID,SP.fname,SP.lname from eventparticipant EP INNER JOIN studentprofile SP ON SP.studentID = EP.studentID where EP.eventID =? 
-`,
-      [
-       id
-      ],
-      (error, results, fields) => {
-        if (error) {
-          callBack(error);
-        }
-        return callBack(null, results);
-      }
-    );
+  Event.findOne({ _id : id }, (error, result) => {
+    if (error) {
+      callBack(error);
+    }
+    console.log(result);
+    return callBack(null, result.participants);
+  });
   },
 
 //   changeApplicationStatus: (data, callBack) => {

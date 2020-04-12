@@ -19,6 +19,8 @@ import Students from './Student/Students/Students';
 import Events from './Student/Events/Events';
 import EventRegistrations from './Student/Events/EventRegistrations';
 import StudentMessages from './Student/Messages/Messages';
+import CompanyMessages from './Company/Messages/Messages';
+
 
 
 
@@ -68,6 +70,8 @@ class Main extends Component {
                 <Route path="/student/events" component={Events}/>
                 <Route path="/student/event-registrations" component={EventRegistrations}/>
                 <Route path="/student/messages" component={StudentMessages}/>
+                <Route path="/company/messages" component={CompanyMessages}/>
+
 
                 
 

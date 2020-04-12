@@ -14,18 +14,18 @@ class IndividualApplicant extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            jobApplicationID: "",
+            jobID: "",
             studentID: "",
             status: "",
             applicationDate: "",
-            fname: "",
-            lname: ""
+            studentName:""
         }
     }
     changeStatus = (e)=>{
        const data={
-           jobApplicationID : this.state.jobApplicationID,
-           status : e.target.value
+           id : this.state.jobID,
+           status : e.target.value,
+           studentID : this.state.studentID
        }
        console.log(data);
         //change application status
@@ -47,14 +47,12 @@ class IndividualApplicant extends Component {
 
     componentDidMount() {
         this.setState({
-            jobApplicationID: this.props.individualApplicant.jobApplicationID,
+            jobID: this.props.jobID,
             studentID: this.props.individualApplicant.studentID,
             status: this.props.individualApplicant.status,
             applicationDate: this.props.individualApplicant.applicationDate,
-            fname: this.props.individualApplicant.fname,
-            lname:this.props.individualApplicant.lname,
+            studentName: this.props.individualApplicant.studentName,
             resumeURL:this.props.individualApplicant.resumeURL,
-
         })
     }
 
@@ -63,7 +61,7 @@ class IndividualApplicant extends Component {
         return (
             <tr>
             {/* <th scope="row"></th> */}
-            <td>{this.state.fname} {this.state.lname}</td>
+            <td>{this.state.studentName}</td>
             <td>{this.state.applicationDate}</td>
             <td><Link to={profileLink} className="btn btn-primary">View</Link></td>
             <td><a href={this.state.resumeURL} className="btn btn-primary" target="_blank">Resume</a></td>

@@ -37,6 +37,7 @@ class Navbar extends Component {
             <ul className="nav navbar-nav navbar-right">
             <li><Link to="/company/postings">Job Postings</Link></li>
                     <li><Link to={profileLink}>Profile</Link></li>
+                    <li><Link to="/company/messages">Messages</Link></li>
                     <li><Link to="/company/students">Students</Link></li>
                     <li><Link to="/company/events">Events</Link></li>
 

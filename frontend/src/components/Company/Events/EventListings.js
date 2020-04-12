@@ -4,6 +4,8 @@ import axios from 'axios';
 import EventPostingsNavbar from './EventPostingsNavbar';
 import {dateTimeToDate} from '../../../helperMethods';
 import backendServer from '../../../webConfig'
+import { paginate, pages } from '../../../helperFunctions/paginate'
+
 
 
 
@@ -36,7 +38,9 @@ class EventListings extends Component {
             .then(response => {
                 if (response.status === 200) {
                     this.setState({
-                        eventList: response.data.data
+                        eventList: response.data.data,
+                        pages: pages(response.data.data, 10)
+
                     })
                     console.log(response);
                 } else {
@@ -45,8 +49,22 @@ class EventListings extends Component {
             });
     }
 
-    render() {
+    paginatinon = (e) => {
+        this.setState({
+            filteredStudents: paginate(this.state.eventList,e, 10)
+        })
+    }
 
+    render() {
+        let links = [];
+        if (this.state.pages > 0) {
+            for (let i = 1; i <= this.state.pages; i++) {
+                links.push(<li className="page-item" key={i}><a className="page-link" onClick={() => { this.paginatinon(i) }}>
+                    {i}
+                </a></li>
+                )
+            }
+        }
 
 
         let events = this.state.eventList.map(event => {
@@ -59,7 +77,7 @@ class EventListings extends Component {
                     <td>{dateTimeToDate(event.date)}</td>
                     <td>{event.time}</td>
                     <td>{event.majorsEligible}</td>
-                    <td><button value={event.eventID} onClick={this.viewParticipants} className="btn btn-success">View</button></td>
+                    <td><button value={event._id} onClick={this.viewParticipants} className="btn btn-success">View</button></td>
                 </tr>
             )
         })
@@ -84,6 +102,9 @@ class EventListings extends Component {
                         </thead>
                         <tbody>
                             {events}
+                            <ul className="pagination">
+   {links}
+   </ul>
                         </tbody>
                     </table>
                 </div>

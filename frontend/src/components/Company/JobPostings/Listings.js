@@ -4,6 +4,8 @@ import { jobTypes, applicationStatus } from '../../../enum.js';
 import axios from 'axios';
 import PostingsNavbar from './PostingsNavbar';
 import backendServer from '../../../webConfig'
+import { paginate, pages } from '../../../helperFunctions/paginate'
+
 
 
 
@@ -36,7 +38,9 @@ class Listings extends Component {
             .then(response => {
                 if (response.status === 200) {
                     this.setState({
-                        jobList: response.data.data
+                        jobList: response.data.data,
+                        pages: pages(response.data.data, 10)
+
                     })
                     console.log(response);
                 } else {
@@ -45,9 +49,22 @@ class Listings extends Component {
             });
     }
 
+    paginatinon = (e) => {
+        this.setState({
+            filteredStudents: paginate(this.state.jobList,e, 10)
+        })
+    }
     render() {
 
-
+        let links = [];
+        if (this.state.pages > 0) {
+            for (let i = 1; i <= this.state.pages; i++) {
+                links.push(<li className="page-item" key={i}><a className="page-link" onClick={() => { this.paginatinon(i) }}>
+                    {i}
+                </a></li>
+                )
+            }
+        }
 
         let jobs = this.state.jobList.map(job => {
             return (
@@ -60,7 +77,7 @@ class Listings extends Component {
                     <td>{job.postedDate}</td>
                     <td>{job.deadLineDate}</td>
                     <td>{job.salary}</td>
-                    <td><button value={job.jobID} onClick={this.viewApplications} className="btn btn-success">View</button></td>
+                    <td><button value={job._id} onClick={this.viewApplications} className="btn btn-success">View</button></td>
                 </tr>
             )
         })
@@ -117,6 +134,9 @@ class Listings extends Component {
                         </thead>
                         <tbody>
                             {jobs}
+                            <ul className="pagination">
+                            {links}
+                            </ul>
                         </tbody>
                     </table>
                 </div>
