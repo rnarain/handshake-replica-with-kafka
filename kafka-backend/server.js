@@ -1,7 +1,12 @@
 var connection =  new require('./kafka/Connection');
 //topics files
-//var signin = require('./services/signin.js');
-var Student = require('./services/Student.js');
+var Student = require('./services/student.js');
+var Message = require('./services/message.js');
+var Company = require('./services/company.js');
+var Event = require('./services/event.js');
+var Job = require('./services/job.js');
+
+
 
 const { mongoDB} = require('./config/configValues');
 
@@ -58,3 +63,9 @@ function handleTopicRequest(topic_name,fname){
 //first argument is topic name
 //second argument is a function that will handle this topic request
 handleTopicRequest("student",Student)
+handleTopicRequest("message",Message)
+handleTopicRequest("company",Company)
+handleTopicRequest("job",Job)
+handleTopicRequest("event",Event)
+
+

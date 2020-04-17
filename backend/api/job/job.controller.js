@@ -1,16 +1,4 @@
-const {
-  createJob,
-  getJobsByStudentID,
-  getJobsByCompanyID,
-  deleteJob,
-  getApplicantListByJobID,
-  changeApplicationStatus,
-  applyForJob,
-  getAppliedJobsByStudentID
-} = require("./job.service");
-
-
-
+var kafka = require('../../kafka/client');
 const url = require('url');
 var multer = require('multer')
 var storage = multer.diskStorage({
@@ -39,7 +27,11 @@ var upload = multer({
 
 module.exports = {
   createJob: (req, res) => {
-    createJob(req.body, (err, results) => {
+    const payload = {
+      path: 'create_job',
+      data: req.body
+    }
+    kafka.make_request('job', payload, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -52,79 +44,28 @@ module.exports = {
         data: results
       });
     });
+    // createJob(req.body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(201).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
 
   getJobsByStudentID: (req, res) => {
     const id = req.params.id;
-    getJobsByStudentID(id, (err, results) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      return res.json({
-        success: 1,
-        data: results
-      });
-    });
-  },
-
-  getJobsByCompanyID: (req, res) => {
-    const id = req.params.id;
-
-    getJobsByCompanyID(id, (err, results) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      return res.json({
-        success: 1,
-        data: results
-      });
-    });
-  },
-
-  getApplicantListByJobID: (req, res) => {
-    const id = req.params.id;
-    // return res.json({
-    //   success: 0,
-    //   data: "ID cannot be null"
-    // });
-
-    getApplicantListByJobID(id, (err, results) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      return res.json({
-        success: 1,
-        data: results
-      });
-    });
-  },
-
-  deleteJob: (req, res) => {
-    const id = req.params.id;
-    deleteJob(id, (err, results) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      if (results.affectedRows == 0) {
-        console.log(results);
-        return res.json({
-          success: 0,
-          message: "Record Not Found"
-        });
-      }
-      return res.json({
-        success: 1,
-        message: "Job deleted successfully"
-      });
-    });
-  },
-
-  changeApplicationStatus: (req, res) => {
-    changeApplicationStatus(req.body, (err, results) => {
+    const payload = {
+      path: 'get_jobs_by_student_id',
+      id:id
+    }
+    kafka.make_request('job', payload, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -137,22 +78,144 @@ module.exports = {
         data: results
       });
     });
+    // getJobsByStudentID(id, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return;
+    //   }
+    //   return res.json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
-  getAppliedJobsByStudentID: (req, res) => {
+
+  getJobsByCompanyID: (req, res) => {
     const id = req.params.id;
-    getAppliedJobsByStudentID(id,(err, results) => {
+    const payload = {
+      path: 'get_jobs_by_company_id',
+      id:id
+    }
+    kafka.make_request('job', payload, (err, results) => {
       if (err) {
         console.log(err);
-        return;
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
       }
-      return res.json({
+      return res.status(200).json({
         success: 1,
         data: results
       });
     });
+    // getJobsByCompanyID(id, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return;
+    //   }
+    //   return res.json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
+  },
+
+  getApplicantListByJobID: (req, res) => {
+    const id = req.params.id;
+    const payload = {
+      path: 'get_applicant_list_by_job_id',
+      id:id
+    }
+    kafka.make_request('job', payload, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
+      }
+      return res.status(200).json({
+        success: 1,
+        data: results
+      });
+    });
+
+    // getApplicantListByJobID(id, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return;
+    //   }
+    //   return res.json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
+  },
+
+  changeApplicationStatus: (req, res) => {
+    const payload = {
+      path: 'change_application_status',
+      data: req.body
+    }
+    kafka.make_request('job', payload, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
+      }
+      return res.status(200).json({
+        success: 1,
+        data: results
+      });
+    });
+    // changeApplicationStatus(req.body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
+  },
+  getAppliedJobsByStudentID: (req, res) => {
+    const id = req.params.id;
+    const payload = {
+      path: 'get_applied_jobs_by_student_id',
+      id:id
+    }
+    kafka.make_request('job', payload, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
+      }
+      return res.status(201).json({
+        success: 1,
+        data: results
+      });
+    });
+    // getAppliedJobsByStudentID(id,(err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return;
+    //   }
+    //   return res.json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
   applyForJob: (req, res) => {
-    console.log("aya");
     upload(req, res, function (err) {
       if (err) {
         return res.status(500).json(err);
@@ -165,7 +228,11 @@ module.exports = {
         resumeURL:  "/Uploads/Resumes/" +req.file.originalname,
         name:queryObject.name
       }
-      applyForJob(data, (err, results) => {
+      const payload = {
+        path: 'apply_for_job',
+        data: data
+      }
+      kafka.make_request('job', payload, (err, results) => {
         if (err) {
           console.log(err);
           return res.status(500).json({
@@ -173,12 +240,26 @@ module.exports = {
             message: "Database connection errror"
           });
         }
-        return res.status(201).json({
+        return res.status(200).json({
           success: 1,
           data: results
         });
       });
-    });
+    })
+    //   applyForJob(data, (err, results) => {
+    //     if (err) {
+    //       console.log(err);
+    //       return res.status(500).json({
+    //         success: 0,
+    //         message: "Database connection errror"
+    //       });
+    //     }
+    //     return res.status(201).json({
+    //       success: 1,
+    //       data: results
+    //     });
+    //   });
+    // });
   },
 
 }

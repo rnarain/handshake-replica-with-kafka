@@ -1,12 +1,3 @@
-const {
-  login,
-  updateCompanyProfilePic,
-  updateCompanyDetails,
-  // updateContactInformation,
-   getAllStudents,
-  getCompanyProfileDetails
-} = require("./company.service");
-
 const jwt = require('jsonwebtoken');
 const { secret } = require('../../config/configValues');
 var kafka = require('../../kafka/client');
@@ -44,7 +35,11 @@ var upload = multer({
 module.exports = {
   login: (req, res) => {
     const body = req.body;
-    login(body, (err, results) => {
+    const data = {
+      data: body,
+      path: 'company_login'
+    }
+    kafka.make_request('company', data, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -83,8 +78,11 @@ module.exports = {
 
   getCompanyProfileDetails: (req, res) => {
     const id = req.params.id;
-
-    getCompanyProfileDetails(id, (err, results) => {
+    const payload = {
+      path: 'get_company_profile_details',
+      id: id
+    }
+    kafka.make_request('company', payload, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -97,28 +95,28 @@ module.exports = {
         data: results
       });
     });
+    // getCompanyProfileDetails(id, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
 
   updateCompanyDetails: (req, res) => {
     const body = req.body;
-    updateCompanyDetails(body, (err, results) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "Database connection errror"
-        });
-      }
-      return res.status(200).json({
-        success: 1,
-        data: results
-      });
-    })
-  },
-
-
-  getAllStudents: (req, res) => {
-    getAllStudents((err, results) => {
+    const payload = {
+      path: 'update_company_details',
+      data: body
+    }
+    kafka.make_request('company', payload, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -131,209 +129,53 @@ module.exports = {
         data: results
       });
     });
+    // updateCompanyDetails(body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // })
   },
 
-  // getStudentDetails: (req, res) => {
-  //   const id = req.params.id;
-  //   const data = {
-  //     id: id,
-  //     path: 'get_student_details'
-  //   }
-  //   // kafka.make_request('student',data,(err, results) => {
-  //   //     if (err) {
-  //   //       console.log(err);
-  //   //       return;
-  //   //     }
-  //   //       return res.json({
-  //   //       success: 1,
-  //   //       data: results
-  //   //       });
-  //   //   });
-  //   getStudentProfileDetails(id, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return;
-  //     }
-  //     return res.json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
 
-
-
-
-
-
-  // updateStudentName: (req, res) => {
-  //   const body = req.body;
-  //   updateStudentName(body, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
-
-  // updateStudentSkills: (req, res) => {
-  //   const body = req.body;
-  //   updateStudentSkills(body, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
-
-  // updateStudentObjective: (req, res) => {
-  //   const body = req.body;
-  //   updateStudentObjective(body, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
-  // updateEducation: (req, res) => {
-  //   const body = req.body;
-  //   updateEducation(body, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
-
-  // deleteEducation: (req, res) => {
-  //   const body = req.body;
-  //   deleteEducation(body, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
-
-  // addEducation: (req, res) => {
-  //   const body = req.body;
-  //   addEducation(body, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
-
-  // updateExperience: (req, res) => {
-  //   const body = req.body;
-  //   updateExperience(body, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
-
-  // deleteExperience: (req, res) => {
-  //   const body = req.body;
-  //   deleteExperience(body, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
-
-  // addExperience: (req, res) => {
-  //   const body = req.body;
-  //   addExperience(body, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
-
-  // getAllStudents: (req, res) => {
-  //   const id = req.params.id;
-  //   getAllStudents(id,(err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
+  getAllStudents: (req, res) => {
+    const payload = {
+      path: 'get_all_students'
+    }
+    kafka.make_request('company', payload, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
+        });
+      }
+      return res.status(200).json({
+        success: 1,
+        data: results
+      });
+    });
+    // getAllStudents((err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
+  },
 
   updateCompanyProfilePic: (req, res) => {
     upload(req, res, function (err) {
@@ -345,110 +187,39 @@ module.exports = {
         profilePicURL: "/Uploads/Profile-Pic/" + req.file.originalname,
         id: req.params.id
       }
-      updateCompanyProfilePic(data, (err, results) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            success: 0,
-            message: "Database connection errror"
-          });
-        }
-        return res.status(200).json({
-          success: 1,
-          data: data.profilePicURL
+
+    const payload = {
+      path: 'update_company_profile_pic',
+      data: data
+    }
+    kafka.make_request('company', payload, (err, results) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: 0,
+          message: "Database connection errror"
         });
+      }
+      return res.status(200).json({
+        success: 1,
+        data: data.profilePicURL
       });
     });
-  },
-
-
-  
-  // updateStudentProfilePic: (req, res) => {
-  //   upload(req, res, function (err) {
-  //     if (err) {
-  //       return res.status(500).json(err);
-  //     }
-  //     console.log(req.file.mimetype)
-  //     const data = {
-  //       profilePicURL: "/Uploads/Profile-Pic/" + req.file.originalname,
-  //       id: req.params.id
-  //     }
-  //     updateStudentProfilePic(data, (err, results) => {
-  //       if (err) {
-  //         console.log(err);
-  //         return res.status(500).json({
-  //           success: 0,
-  //           message: "Database connection errror"
-  //         });
-  //       }
-  //       return res.status(200).json({
-  //         success: 1,
-  //         data: data.profilePicURL
-  //       });
-  //     });
-  //   });
-  // },
-
-
-  // getCompanyProfileDetails: (req, res) => {
-  //   const id = req.params.id;
-
-  //   getCompanyProfileDetails(id, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   });
-  // },
-  // updateCompanyDetails: (req, res) => {
-  //   const body = req.body;
-  //   updateCompanyDetails(body, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     updateContactInformation(body, (err, results) => {
-  //       if (err) {
-  //         console.log(err);
-  //         return res.status(500).json({
-  //           success: 0,
-  //           message: "Database connection errror"
-  //         });
-  //       }
-  //       return res.status(200).json({
-  //         success: 1,
-  //         data: results
-  //       });
-  //     })
-  //   });
-  // },
-
-  // updateContactInformation: (req, res) => {
-  //   const body = req.body;
-  //   updateContactInformation(body, (err, results) => {
-  //     if (err) {
-  //       console.log(err);
-  //       return res.status(500).json({
-  //         success: 0,
-  //         message: "Database connection errror"
-  //       });
-  //     }
-  //     return res.status(200).json({
-  //       success: 1,
-  //       data: results
-  //     });
-  //   })
-  // },
-
+    //   updateCompanyProfilePic(data, (err, results) => {
+    //     if (err) {
+    //       console.log(err);
+    //       return res.status(500).json({
+    //         success: 0,
+    //         message: "Database connection errror"
+    //       });
+    //     }
+    //     return res.status(200).json({
+    //       success: 1,
+    //       data: data.profilePicURL
+    //     });
+    //   });
+    // });
+  });
+},
 
 }

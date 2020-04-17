@@ -18,7 +18,8 @@ class ApplicantList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            applicantList: []
+            applicantList: [],
+            filteredApplicants:[]
         }
     }
 
@@ -28,9 +29,11 @@ class ApplicantList extends Component {
         axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
         axios.get(`${backendServer}/api/job/getApplicantListByJobID/${this.props.match.params.id}`)
             .then(response => {
+                console.log(response);
                 if (response.status === 200) {
                       this.setState({
                         applicantList: response.data.data,
+                        filteredApplicants: paginate(response.data.data,1, 10),
                         pages: pages(response.data.data, 10)
                       })
                     console.log(response.data.data);
@@ -42,12 +45,12 @@ class ApplicantList extends Component {
 
     paginatinon = (e) => {
         this.setState({
-            filteredStudents: paginate(this.state.students,e, 10)
+            filteredApplicants: paginate(this.state.applicantList,e, 10)
         })
     }
 
     render() {
-        let applicants = this.state.applicantList.map(applicant => {
+        let applicants = this.state.filteredApplicants.map(applicant => {
             return (
                <IndividualApplicant individualApplicant={applicant} jobID= {this.props.match.params.id}/>
             )

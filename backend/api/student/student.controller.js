@@ -1,21 +1,3 @@
-const {
-  createStudent,
-  login,
-  getStudentProfileDetails,
-  updateStudentName,
-  updateStudentProfilePic,
-  updateStudentObjective,
-  addEducation,
-  updateEducation,
-  deleteEducation,
-  addExperience,
-  deleteExperience,
-  updateExperience,
-  updateStudentSkills,
-  updateContactInformation,
-  getAllStudents,
-} = require("./student.service");
-
 const jwt = require('jsonwebtoken');
 const { secret } = require('../../config/configValues');
 var kafka = require('../../kafka/client');
@@ -55,7 +37,11 @@ module.exports = {
     const body = req.body;
     const salt = genSaltSync(10);
     body.password = hashSync(body.password, salt);
-    createStudent(body, (err, results) => {
+    const data = {
+      data: body,
+      path: 'create_student'
+    }
+    kafka.make_request('student', data, (err, results) => {
       if (err) {
         return res.status(400).json({
           success: 0,
@@ -71,7 +57,11 @@ module.exports = {
   },
   login: (req, res) => {
     const body = req.body;
-    login(body, (err, results) => {
+    const data = {
+      data: body,
+      path: 'student_login'
+    }
+    kafka.make_request('student', data, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -87,7 +77,7 @@ module.exports = {
           });
         }
         if (compareSync(body.password, results.password)) {
-          const payload = { _id: results._id, type: 0 , name:result.fName , profilePicURL : result.profilePicURL};
+          const payload = { _id: results._id, type: 0, name: results.fname, profilePicURL: results.profilePicURL };
           const token = jwt.sign(payload, secret, {
             expiresIn: 1008000
           });
@@ -108,24 +98,13 @@ module.exports = {
     });
   },
 
-
   getStudentDetails: (req, res) => {
     const id = req.params.id;
     const data = {
       id: id,
       path: 'get_student_details'
     }
-    // kafka.make_request('student',data,(err, results) => {
-    //     if (err) {
-    //       console.log(err);
-    //       return;
-    //     }
-    //       return res.json({
-    //       success: 1,
-    //       data: results
-    //       });
-    //   });
-    getStudentProfileDetails(id, (err, results) => {
+    kafka.make_request('student', data, (err, results) => {
       if (err) {
         console.log(err);
         return;
@@ -135,100 +114,187 @@ module.exports = {
         data: results
       });
     });
+    // getStudentProfileDetails(id, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return;
+    //   }
+    //   return res.json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
-
-
-
-
-
 
   updateStudentName: (req, res) => {
     const body = req.body;
-    updateStudentName(body, (err, results) => {
+    const payload = {
+      path: 'update_student_name',
+      data: body
+    }
+    kafka.make_request('student', payload, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "Database connection errror"
-        });
+        return;
       }
-      return res.status(200).json({
+      return res.json({
         success: 1,
         data: results
       });
     });
+    // updateStudentName(body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
 
   updateStudentSkills: (req, res) => {
     const body = req.body;
-    updateStudentSkills(body, (err, results) => {
+    const payload = {
+      path: 'update_skills',
+      data: body
+    }
+    kafka.make_request('student', payload, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "Database connection errror"
-        });
+        return;
       }
-      return res.status(200).json({
+      return res.json({
         success: 1,
         data: results
       });
     });
+    // const body = req.body;
+    // updateStudentSkills(body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
 
   updateStudentObjective: (req, res) => {
     const body = req.body;
-    updateStudentObjective(body, (err, results) => {
+    const payload = {
+      path: 'update_objective',
+      data: body
+    }
+    kafka.make_request('student', payload, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "Database connection errror"
-        });
+        return;
       }
-      return res.status(200).json({
+      return res.json({
         success: 1,
         data: results
       });
     });
+    // const body = req.body;
+    // updateStudentObjective(body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
+
   updateEducation: (req, res) => {
     const body = req.body;
-    updateEducation(body, (err, results) => {
+    const payload = {
+      path: 'update_education',
+      data: body
+    }
+    kafka.make_request('student', payload, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "Database connection errror"
-        });
+        return;
       }
-      return res.status(200).json({
+      return res.json({
         success: 1,
         data: results
       });
     });
+
+
+    // const body = req.body;
+    // updateEducation(body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
 
   deleteEducation: (req, res) => {
     const body = req.body;
-    deleteEducation(body, (err, results) => {
+    const payload = {
+      path: 'delete_education',
+      data: body
+    }
+    kafka.make_request('student', payload, (err, results) => {
       if (err) {
         console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "Database connection errror"
-        });
+        return;
       }
-      return res.status(200).json({
+      return res.json({
         success: 1,
         data: results
       });
     });
+
+    // const body = req.body;
+    // deleteEducation(body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
 
   addEducation: (req, res) => {
     const body = req.body;
-    addEducation(body, (err, results) => {
+    const payload = {
+      path: 'add_education',
+      data: body
+    }
+    kafka.make_request('student', payload, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -241,11 +307,29 @@ module.exports = {
         data: results
       });
     });
+    // const body = req.body;
+    // addEducation(body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
 
   updateExperience: (req, res) => {
     const body = req.body;
-    updateExperience(body, (err, results) => {
+    const payload = {
+      path: 'update_experience',
+      data: body
+    }
+    kafka.make_request('student', payload, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -258,11 +342,28 @@ module.exports = {
         data: results
       });
     });
+    // updateExperience(body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
 
   deleteExperience: (req, res) => {
     const body = req.body;
-    deleteExperience(body, (err, results) => {
+    const payload = {
+      path: 'delete_experience',
+      data: body
+    }
+    kafka.make_request('student', payload, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -275,11 +376,28 @@ module.exports = {
         data: results
       });
     });
+    // deleteExperience(body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
 
   addExperience: (req, res) => {
     const body = req.body;
-    addExperience(body, (err, results) => {
+    const payload = {
+      path: 'add_experience',
+      data: body
+    }
+    kafka.make_request('student', payload, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -292,11 +410,28 @@ module.exports = {
         data: results
       });
     });
+    // addExperience(body, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
 
   getAllStudents: (req, res) => {
     const id = req.params.id;
-    getAllStudents(id,(err, results) => {
+    const payload = {
+      path: 'get_all_student_except_self',
+      id: id
+    }
+    kafka.make_request('student', payload, (err, results) => {
       if (err) {
         console.log(err);
         return res.status(500).json({
@@ -309,32 +444,19 @@ module.exports = {
         data: results
       });
     });
-  },
-
-  updateCompanyProfilePic: (req, res) => {
-    upload(req, res, function (err) {
-      if (err) {
-        return res.status(500).json(err);
-      }
-      console.log(req.file.mimetype)
-      const data = {
-        profilePicURL: "/Uploads/Profile-Pic/" + req.file.originalname,
-        id: req.params.id
-      }
-      updateCompanyProfilePic(data, (err, results) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            success: 0,
-            message: "Database connection errror"
-          });
-        }
-        return res.status(200).json({
-          success: 1,
-          data: results
-        });
-      });
-    });
+    // getAllStudents(id, (err, results) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.status(500).json({
+    //       success: 0,
+    //       message: "Database connection errror"
+    //     });
+    //   }
+    //   return res.status(200).json({
+    //     success: 1,
+    //     data: results
+    //   });
+    // });
   },
 
   updateStudentProfilePic: (req, res) => {
@@ -347,7 +469,12 @@ module.exports = {
         profilePicURL: "/Uploads/Profile-Pic/" + req.file.originalname,
         id: req.params.id
       }
-      updateStudentProfilePic(data, (err, results) => {
+
+      const payload = {
+        path: 'update_student_profile_pic',
+        data: data
+      }
+      kafka.make_request('student', payload, (err, results) => {
         if (err) {
           console.log(err);
           return res.status(500).json({
@@ -361,68 +488,44 @@ module.exports = {
         });
       });
     });
-  },
+
+      //   updateStudentProfilePic(data, (err, results) => {
+      //     if (err) {
+      //       console.log(err);
+      //       return res.status(500).json({
+      //         success: 0,
+      //         message: "Database connection errror"
+      //       });
+      //     }
+      //     return res.status(200).json({
+      //       success: 1,
+      //       data: data.profilePicURL
+      //     });
+      //   });
+      // });
+    },
 
 
-  getCompanyProfileDetails: (req, res) => {
-    const id = req.params.id;
 
-    getCompanyProfileDetails(id, (err, results) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "Database connection errror"
-        });
-      }
-      return res.status(200).json({
-        success: 1,
-        data: results
-      });
-    });
-  },
-  updateCompanyDetails: (req, res) => {
-    const body = req.body;
-    updateCompanyDetails(body, (err, results) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "Database connection errror"
-        });
-      }
-      updateContactInformation(body, (err, results) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            success: 0,
-            message: "Database connection errror"
-          });
+
+      updateContactInformation: (req, res) => {
+        const body = req.body;
+        const payload = {
+          path: 'update_student_contact_information',
+          data: body
         }
-        return res.status(200).json({
-          success: 1,
-          data: results
-        });
-      })
-    });
-  },
-
-  updateContactInformation: (req, res) => {
-    const body = req.body;
-    updateContactInformation(body, (err, results) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "Database connection errror"
+        kafka.make_request('student', payload, (err, results) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).json({
+              success: 0,
+              message: "Database connection errror"
+            });
+          }
+          return res.status(200).json({
+            success: 1,
+            data: results
+          });
         });
       }
-      return res.status(200).json({
-        success: 1,
-        data: results
-      });
-    })
-  },
-
-
 }

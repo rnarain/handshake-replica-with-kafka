@@ -1,8 +1,4 @@
-import { ADD_BOOK , SIGN_IN , GET_STUDENT_DATA, CHANGE_NAME , SIGN_UP} from "../constants/action-types";
-export function addBook(payload) {
-  console.log("dispatching the action")
-  return { type: ADD_BOOK, payload };
-}
+import { SIGN_IN , GET_STUDENT_DATA, CHANGE_NAME , SIGN_UP} from "../constants/action-types";
 
 export function signin(payload) {
   console.log("dispatching the action")

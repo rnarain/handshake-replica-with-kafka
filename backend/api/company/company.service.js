@@ -5,12 +5,29 @@ const Student = require("../../Models/StudentModel");
 module.exports = {
   createCompany: (data, callBack) => {
     var newCompany = new Company({
-      name: "Google",
+      name: data.name,
       email: data.email,
-      phone : "123",
-      password : "123456",
-      city : "San Jose",
-      description : "Desc",
+      phone : data.phone,
+      password : data.password,
+      city : data.city,
+      description : data.description,
+    })
+    Company.findOne({ email: data.email }, (error, user) => {
+      if (error) {
+        callBack(error);
+      }
+      if (user) {
+        return callBack("User already exists");
+      }
+      else {
+        newCompany.save((error, data) => {
+          if (error) {
+            callBack(error);
+          }
+          console.log(data);
+          return callBack(null, data);
+        })
+      }
     })
   },
 

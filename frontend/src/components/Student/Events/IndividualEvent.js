@@ -25,6 +25,7 @@ class IndividualEvent extends Component {
             studentID: localStorage.getItem('id'),
             name:localStorage.getItem('name'),
         }
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
         axios.post(`${backendServer}/api/event/registerForEvent`,data)
             .then(response => {
                 this.setState({

@@ -6,9 +6,11 @@ import MessagesNavbar from './MessagesNavbar';
 import backendServer from '../../../webConfig'
 import {dateTimeToDate} from '../../../helperMethods'
 import IndividualMessage from './IndividualMessage'
+import { connect } from 'react-redux';
+import { setMessages  } from "../../../js/actions/companyMessage.js";
 
 
-class Messages extends Component {
+class MessagesPage extends Component {
     constructor(props) {
         //Call the constrictor of Super classNameName i.e The Component
         super(props);
@@ -40,12 +42,10 @@ class Messages extends Component {
         await axios.get(`${backendServer}/api/message/getMessages/${localStorage.getItem('id')}`)
             .then(response => {
                 console.log(response);
+                this.props.setMessages(response.data.data);
                 this.setState({
-                    messages: response.data.data,
                     selectedMessage: response.data.data[0],
                 })
-              
-
                 // this.props.updateFilteredJobs({jobs:this.state.jobList});
             }
             ).catch(ex => {
@@ -60,7 +60,7 @@ class Messages extends Component {
     }
 
     render(){
-      let messageList = this.state.messages.map(message => {
+      let messageList = this.props.messages.map(message => {
         let chattingWith = {};
         if(message.user1.id === localStorage.getItem('id')){
           chattingWith = message.user2
@@ -128,4 +128,17 @@ class Messages extends Component {
         )
     }
 }
+const mapStateToProps = state => {
+  return {
+      messages: state.companyMessageReducer.messages,
+      selectedMessage : state.companyMessageReducer.selectedMessage
+  };
+};
+
+function mapDispatchToProps(dispatch) {
+  return {
+      setMessages : (data) => dispatch(setMessages(data)),
+  };
+};
+const Messages = connect(mapStateToProps, mapDispatchToProps)(MessagesPage);
 export default Messages;

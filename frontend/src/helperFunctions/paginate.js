@@ -9,7 +9,7 @@ export function pages(array,page_size){
             return 1
         }
         else{
-            return (Math.floor(len/page_size))
+            return Math.ceil(len/page_size)
         }
     }
     else{

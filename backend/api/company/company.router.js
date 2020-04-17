@@ -34,7 +34,7 @@ let checkAuth = passport.authenticate('jwt', { session: false });
 
 
  router.post("/login", login);
- router.get("/getCompanyProfileDetails/:id", checkAuth,  getCompanyProfileDetails);
+ router.get("/getCompanyProfileDetails/:id",  getCompanyProfileDetails);
  router.post("/updateCompanyDetails", checkAuth, updateCompanyDetails);
  router.post("/updateCompanyProfilePic/:id" ,checkAuth ,updateCompanyProfilePic);
 

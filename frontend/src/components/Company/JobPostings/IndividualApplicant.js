@@ -3,14 +3,16 @@ import { Link } from 'react-router-dom';
 import {jobTypes, applicationStatus} from '../../../enum.js';
 import axios from 'axios';
 import PostingsNavbar from './PostingsNavbar';
-import backendServer from '../../../webConfig'
+import backendServer from '../../../webConfig';
+import { connect } from 'react-redux';
+import { changeApplicationStatus  } from "../../../js/actions/companyJobApplicants.js";
 
 
 
 
 
 //create the Navbar Component
-class IndividualApplicant extends Component {
+class IndividualApplicantPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -35,6 +37,7 @@ class IndividualApplicant extends Component {
         axios.post(`${backendServer}/api/job/changeApplicationStatus`,data)
             .then(response => {
                 if (response.status === 200) {
+                    this.props.changeApplicationStatus(data);
                     this.setState({
                         status : data.status
                     })
@@ -76,6 +79,17 @@ class IndividualApplicant extends Component {
           )
     }
 }
-
-export default IndividualApplicant;
+const mapStateToProps = state => {
+    return {
+        applicationStatus: state.companyJobApplicantReducer.applicationStatus
+    };
+  };
+  
+  function mapDispatchToProps(dispatch) {
+    return {
+        changeApplicationStatus : (data) => dispatch(changeApplicationStatus(data)),
+    };
+  };
+  const IndividualApplicant = connect(mapStateToProps, mapDispatchToProps)(IndividualApplicantPage);
+  export default IndividualApplicant;
 

@@ -114,6 +114,7 @@ class JobListPage extends Component {
                 preConfirm: (file) => {
                     const data = new FormData() 
                     data.append('file', file)
+                    axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
                     axios.post(`${backendServer}/api/job/applyForJob?studentID=${localStorage.getItem('id')}&jobID=${this.state.selectedJob._id}&name=Narain`, data)
                         .then(response => {
                             if(response.status==201){
@@ -167,7 +168,7 @@ class JobListPage extends Component {
                 <div className="row job" key={job._id} onClick={() => { this.showJobDetail(job) }} >
                     <div className="col-sm-12">
                         <h5> {job.title}</h5>
-                        <p className="smallText"> {job.name} - {job.location}</p>
+                        <p className="smallText"> {job.companyName} - {job.location}</p>
                         <span className="greyText smallText">{jobTypes[job.category]}</span>
                     </div>
                 </div>
@@ -201,6 +202,9 @@ class JobListPage extends Component {
            <option value="-1">desc</option>
            </select>
        );
+
+       let profileLink="/company/profile/" + this.state.selectedJob.companyID
+
         return (
 
            
@@ -233,7 +237,7 @@ class JobListPage extends Component {
                 />
                 </div> */}
                     <h3>{this.state.selectedJob.title}</h3>
-                    <p>{this.state.selectedJob.name}</p>
+            <p><a href={profileLink}>{this.state.selectedJob.companyName}</a></p>
                     <span className="greyText marginright10">
                         <i className="glyphicon glyphicon-briefcase"></i> {jobTypes[this.state.selectedJob.category]} </span>
                     <span className="greyText marginright10"><i className="glyphicon glyphicon-map-marker"></i> {this.state.selectedJob.location}</span>

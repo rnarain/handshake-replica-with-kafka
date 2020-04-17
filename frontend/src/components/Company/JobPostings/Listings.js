@@ -17,6 +17,7 @@ class Listings extends Component {
         super(props);
         this.state = {
             jobList: [],
+            filteredJobList:[],
             redirectVariable: "",
         }
         // this.showJobDetail = this.showJobDetail.bind(this);
@@ -40,10 +41,11 @@ class Listings extends Component {
                 if (response.status === 200) {
                     this.setState({
                         jobList: response.data.data,
+                        filteredJobList : paginate(response.data.data,1, 10),
                         pages: pages(response.data.data, 10)
 
                     })
-                    console.log(response);
+                    console.log(pages);
                 } else {
                     console.log("error");
                 }
@@ -52,13 +54,14 @@ class Listings extends Component {
 
     paginatinon = (e) => {
         this.setState({
-            filteredStudents: paginate(this.state.jobList,e, 10)
+            filteredJobList: paginate(this.state.jobList,e, 10)
         })
     }
     render() {
 
         let links = [];
         if (this.state.pages > 0) {
+            console.log(this.state.pages);
             for (let i = 1; i <= this.state.pages; i++) {
                 links.push(<li className="page-item" key={i}><a className="page-link" onClick={() => { this.paginatinon(i) }}>
                     {i}
@@ -67,7 +70,7 @@ class Listings extends Component {
             }
         }
 
-        let jobs = this.state.jobList.map(job => {
+        let jobs = this.state.filteredJobList.map(job => {
             return (
                 // <div className="row job"  key= {job.jobID} >
                 <tr>

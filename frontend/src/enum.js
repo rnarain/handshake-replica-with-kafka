@@ -16,7 +16,8 @@ export const colleges = {
     1: "Stony Brooks University",
     2: "University of Texas, Dallas",
     3: "Santa Clara University",
-
+    4: "Columbia University-New york",
+    5:" Lincoln School-Long Island"
 }
 
 export const skills = {
@@ -45,6 +46,8 @@ export const majors = {
 6:"Computer Science",
 7:"Cyber Security",
 8:"Software Engineering",
+9:"Commerce",
+10:"Fashion"
 }
 
 export const degreeTypes = {

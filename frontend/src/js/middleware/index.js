@@ -15,7 +15,7 @@ export  function handshakeMiddleWare({ dispatch }) {
         await axios.get(`${backendServer}/api/student/getStudentDetails/` +action.payload)
         .then(response => {
                     console.log(response);
-                    action.payload = response.data.data[0];  
+                    action.payload = response.data.data;  
                 } 
         ).catch( ex =>{
             console.log(ex);

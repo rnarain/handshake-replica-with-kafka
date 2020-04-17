@@ -4,18 +4,20 @@ import cookie from 'react-cookies';
 import backendServer from '../../../webConfig'
 import { connect } from 'react-redux';
 import {dateTimeToDate} from '../../../helperMethods'
+import { sendMessage  } from "../../../js/actions/studentMessage.js";
 
 
-class IndividualMessage extends Component {
+class IndividualMessagePage extends Component {
     constructor(props) {
         //Call the constrictor of Super classNameName i.e The Component
         super(props);
         //maintain the state required for this component
         this.state = {
             selectedMessage: {},
-            newMessage:null,
+            newMessage:"",
             typing:false,
             chatFrom:null,
+            chatFromProfilePic:null,
             messageId:null,
             individualMessage:{
                 chats:[],
@@ -36,6 +38,7 @@ class IndividualMessage extends Component {
             if(this.props.individualMessage.user1.id!==localStorage.getItem('id')){
                 this.setState({
                     chatFrom :this.props.individualMessage.user1.id,
+                    chatFromProfilePic :this.props.individualMessage.user1.profile_img_url,
                     messageId : this.props.individualMessage._id,
                     individualMessage : this.props.individualMessage
 
@@ -44,6 +47,7 @@ class IndividualMessage extends Component {
              else{
                 this.setState({
                     chatFrom :this.props.individualMessage.user2.id,
+                    chatFromProfilePic :this.props.individualMessage.user2.profile_img_url,
                     messageId : this.props.individualMessage._id,
                     individualMessage : this.props.individualMessage
 
@@ -61,11 +65,12 @@ class IndividualMessage extends Component {
             id : this.state.messageId
         }
         
-        
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
         axios.post(`${backendServer}/api/message/addMessage`, data)
             .then(response => {
                 console.log(response);
                 if (response.status == 200) {
+                    this.props.sendMessage(data);
                     let newIM = this.state.individualMessage;
                     let temp = newIM.chats.concat({
                         from :localStorage.getItem('id'),
@@ -104,10 +109,11 @@ class IndividualMessage extends Component {
 
     render(){
       let chats = this.state.individualMessage.chats.map(chat => {
+          console.log(chat);
         if(chat.to === localStorage.getItem('id')){
             return (
                 <div className="incoming_msg">
-                <div className="incoming_msg_img"> <img src={chat.profile_img_url == null ? 'https://ptetutorials.com/images/user-profile.png' : chat.profile_img_url } alt="sunil" /> </div>
+                <div className="incoming_msg_img"> <img src={this.state.chatFromProfilePic == null ? 'https://ptetutorials.com/images/user-profile.png' : this.state.chatFromProfilePic  } alt="sunil" /> </div>
                 <div className="received_msg">
                   <div className="received_withd_msg">
                     <p>{chat.chat}</p>
@@ -151,4 +157,16 @@ class IndividualMessage extends Component {
         )
     }
 }
-export default IndividualMessage;
+const mapStateToProps = state => {
+    return {
+       
+    };
+  };
+  
+  function mapDispatchToProps(dispatch) {
+    return {
+        sendMessage : (data) => dispatch(sendMessage(data)),
+    };
+  };
+  const IndividualMessage = connect(mapStateToProps, mapDispatchToProps)(IndividualMessagePage);
+  export default IndividualMessage;

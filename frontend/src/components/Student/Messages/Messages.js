@@ -4,13 +4,12 @@ import cookie from 'react-cookies';
 import MessagesNavbar from './MessagesNavbar';
 // import JobList from './JobList';
 import backendServer from '../../../webConfig'
-import { connect } from 'react-redux';
-import { updateFilteredJobs } from "../../../js/actions/jobSearch.js";
 import {dateTimeToDate} from '../../../helperMethods'
 import IndividualMessage from './IndividualMessage'
+import { connect } from 'react-redux';
+import { setMessages } from "../../../js/actions/studentMessage.js";
 
-
-class Messages extends Component {
+class MessagesPage extends Component {
     constructor(props) {
         //Call the constrictor of Super classNameName i.e The Component
         super(props);
@@ -37,12 +36,14 @@ class Messages extends Component {
     async componentWillMount() {
 
         axios.defaults.withCredentials = true;
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+
         //make a post request with the user data
         await axios.get(`${backendServer}/api/message/getMessages/${localStorage.getItem('id')}`)
             .then(response => {
                 console.log(response);
+                this.props.setMessages(response.data.data);
                 this.setState({
-                    messages: response.data.data,
                     selectedMessage: response.data.data[0],
                 })
               
@@ -61,7 +62,7 @@ class Messages extends Component {
     }
 
     render(){
-      let messageList = this.state.messages.map(message => {
+      let messageList = this.props.messages.map(message => {
         let chattingWith = {};
         if(message.user1.id === localStorage.getItem('id')){
           chattingWith = message.user2
@@ -118,10 +119,7 @@ class Messages extends Component {
                                 <div className="col-sm-8 white-back">
                                 <IndividualMessage individualMessage={this.state.selectedMessage} />
                                 </div>
-
-
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -129,4 +127,17 @@ class Messages extends Component {
         )
     }
 }
+const mapStateToProps = state => {
+  return {
+      messages: state.studentMessageReducer.messages,
+      selectedMessage : state.studentMessageReducer.selectedMessage
+  };
+};
+
+function mapDispatchToProps(dispatch) {
+  return {
+      setMessages : (data) => dispatch(setMessages(data)),
+  };
+};
+const Messages = connect(mapStateToProps, mapDispatchToProps)(MessagesPage);
 export default Messages;

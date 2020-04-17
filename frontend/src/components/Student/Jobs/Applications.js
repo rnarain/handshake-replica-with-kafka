@@ -4,6 +4,8 @@ import cookie from 'react-cookies';
 import PostingsNavbar from './PostingsNavbar';
 import ApplicationJobList from './ApplicationJobList';
 import backendServer from '../../../webConfig'
+import { paginate, pages } from '../../../helperFunctions/paginate'
+
 
 
 
@@ -32,18 +34,24 @@ class Applications extends Component {
 
         axios.defaults.withCredentials = true;
         //make a post request with the user data
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
         await axios.get(`${backendServer}/api/job/getAppliedJobsByStudentID/${localStorage.getItem('id')}`)
             .then(response => {
                 this.setState({
                     jobList: response.data.data,
-                    filteredJobList: response.data.data
+                    filteredJobList: paginate(response.data.data,1, 10),
+                        pages: pages(response.data.data, 10)
                 })
             }
             ).catch(ex => {
                 alert("error");
             });
     }
-
+    paginatinon = (e) => {
+        this.setState({
+            filteredJobList: paginate(this.state.filteredJobList,e, 10)
+        })
+    }
     clearFilter = () => {
         this.setState({
             pending : false,
@@ -115,6 +123,16 @@ class Applications extends Component {
         if (this.state.selectedfilters.length > 0) {
             clearButton = <a onClick={() => { this.clearFilter() }} className="btn">Clear All</a>
         }
+
+        let links = [];
+        if (this.state.pages > 0) {
+            for (let i = 1; i <= this.state.pages; i++) {
+                links.push(<li className="page-item" key={i}><a className="page-link" onClick={() => { this.paginatinon(i) }}>
+                    {i}
+                </a></li>
+                )
+            }
+        }
         return (
             <div className="handshake-body">
                 <PostingsNavbar />
@@ -132,6 +150,9 @@ class Applications extends Component {
                     </div>
                     <div className="col-sm-12 card">
                         <div className="box-part-container margin20"> <ApplicationJobList jobList={this.state.filteredJobList} />
+                        <ul className="pagination">
+   {links}
+   </ul>
                         </div>
                     </div>
                 </div>
