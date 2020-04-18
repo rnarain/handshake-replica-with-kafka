@@ -6,9 +6,46 @@ var expect = require('chai').expect;
 var agent = require('chai').request.agent(app);
 
 describe('Handshake test', function(){
-
+    it('POST /student Change Name',function(done){ 
+        var data = {
+            fname: "Narain",
+            lname: "Ratanchandani",
+            id:"5e75b9314f8754303c788ecb"
+          }
+        agent.post('/api/student/updateStudentName', data).set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTc1YjkzMTRmODc1NDMwM2M3ODhlY2IiLCJ0eXBlIjowLCJuYW1lIjoiTmFyYWluIiwicHJvZmlsZVBpY1VSTCI6Ii9VcGxvYWRzL1Byb2ZpbGUtUGljLzIzOTE3ODU2Ml9vcmlnLnBuZyIsImlhdCI6MTU4NzEyNjQ5MSwiZXhwIjoxNTg4MTM0NDkxfQ.eVZ6qpR_Y42tdi__KzDqcSaD_f3QGUhIHC9q-Kt3RLw')
+            .then(function(res){
+                expect(res.body.success).to.equal(1);
+                done();
+            })
+            .catch((e) => {
+                done(e);
+            });
+    });
+    it('GET /getAllStudents -  Authorized user',function(done){
+        agent.get('/api/student/getAllStudents/5e75b9314f8754303c788ecb').set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTc1YjkzMTRmODc1NDMwM2M3ODhlY2IiLCJ0eXBlIjowLCJuYW1lIjoiTmFyYWluIiwicHJvZmlsZVBpY1VSTCI6Ii9VcGxvYWRzL1Byb2ZpbGUtUGljLzIzOTE3ODU2Ml9vcmlnLnBuZyIsImlhdCI6MTU4NzEyNjQ5MSwiZXhwIjoxNTg4MTM0NDkxfQ.eVZ6qpR_Y42tdi__KzDqcSaD_f3QGUhIHC9q-Kt3RLw')
+            .then(function(res){
+                expect(res.status).to.equal(200);
+                done();
+            })
+            .catch((e) => {
+                done(e);
+            });
+    });
+    
+    it('GET /getJobsByStudentID - Get all job',function(done){
+        agent.get('/api/job/getJobsByStudentID/5e75b9314f8754303c788ecb').set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTc1YjkzMTRmODc1NDMwM2M3ODhlY2IiLCJ0eXBlIjowLCJuYW1lIjoiTmFyYWluIiwicHJvZmlsZVBpY1VSTCI6Ii9VcGxvYWRzL1Byb2ZpbGUtUGljLzIzOTE3ODU2Ml9vcmlnLnBuZyIsImlhdCI6MTU4NzEyNjQ5MSwiZXhwIjoxNTg4MTM0NDkxfQ.eVZ6qpR_Y42tdi__KzDqcSaD_f3QGUhIHC9q-Kt3RLw')
+            .then(function(res){
+                expect(res.body.success).to.equal(1);
+                done();
+            })
+            .catch((e) => {
+                done(e);
+            });
+    });
+    
+    
     it('GET /studenrProfile - Get student Profile',function(done){
-        agent.get('/api/account/getStudentDetails/17')
+        agent.get('/api/student/getStudentDetails/5e75b9314f8754303c788ecb')
             .then(function(res){
                 expect(res.body.success).to.equal(1);
                 done();
@@ -17,58 +54,16 @@ describe('Handshake test', function(){
                 done(e);
             });
     });
-    it('GET /getAllEventsByStudentID - Get all events Student participated',function(done){
-        agent.get('/api/event/getAllEventsByStudentID/17')
+    it('GET /getAllStudents - Not Authorized error',function(done){
+        agent.get('/api/student/getAllStudents/5e75b9314f8754303c788ecb')
             .then(function(res){
-                expect(res.body.success).to.equal(1);
+                expect(res.status).to.equal(401);
                 done();
             })
             .catch((e) => {
                 done(e);
             });
     });
-    it('GET /getApplicantListByJobID - Get all aplicants for a job',function(done){
-        agent.get('/api/job/getApplicantListByJobID/1')
-            .then(function(res){
-                expect(res.body.success).to.equal(1);
-                done();
-            })
-            .catch((e) => {
-                done(e);
-            });
-    });
-    it('POST /createEvent - Create a new event',function(done){ 
-        const data = {
-        companyID :1,
-        description:"test",
-        name:"name",
-        time:"23:00:00",
-        date:"01/01/2020",
-        location: "San jose",
-        majorsEligible: "0,1,2",
-    }
-        agent.post('/api/account/getStudentDetails/17', data)
-            .then(function(res){
-                expect(res.body.success).to.equal(1);
-                done();
-            })
-            .catch((e) => {
-                done(e);
-            });
-    });
-    it('POST /changeApplicationStatus - Change JOB Application Status',function(done){
-        const data = {
-            studentID :1,
-            jobID:"test",
-            status:2,
-        }
-        agent.post('/api/account/changeApplicationStatus',data)
-            .then(function(res){
-                expect(res.body.success).to.equal(1);
-                done();
-            })
-            .catch((e) => {
-                done(e);
-            });
-    });
+    
+    
 })
