@@ -1,6 +1,6 @@
 # handshake application with kafka
 ## replica of handshake application 
-[Video Demo](https://drive.google.com/file/d/1YDur4vIXpiGaz_6mSGRwEGS08EfwalG-/view?usp=sharing) of the application
+[Video Demo](https://www.youtube.com/watch?v=FOs54Kw5_JM&t=9s) of the application
 ### Steps to deploy the application
 #### Frontend
 1. Clone the repository's front end folder "Frontend" into any machine having node.js installed on it.
